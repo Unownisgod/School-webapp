@@ -8,9 +8,6 @@
         public int age { get; set; }
         public int schoolYear { get; set; }
         public char section { get; set; }
-        public ICollection<Grades> grades { get; set; } = null!;
-        public ICollection<StudentSubject> studentSubjects { get; set; }
-        public ICollection<TeacherStudent> teacherStudents { get; set; }
         public Student()
         {
 
