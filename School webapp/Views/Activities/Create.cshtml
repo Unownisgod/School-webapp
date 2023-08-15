@@ -1,0 +1,73 @@
+﻿@model School_webapp.Models.Activity
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Activity</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="tittle" class="control-label"></label>
+                <input asp-for="tittle" class="form-control" />
+                <span asp-validation-for="tittle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="description" class="control-label"></label>
+                <input asp-for="description" class="form-control" />
+                <span asp-validation-for="description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="deadline" class="control-label"></label>
+                <input asp-for="deadline" class="form-control" />
+                <span asp-validation-for="deadline" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="calification" class="control-label"></label>
+                <input asp-for="calification" class="form-control" />
+                <span asp-validation-for="calification" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="isSubmitted" /> @Html.DisplayNameFor(model => model.isSubmitted)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="isRated" /> @Html.DisplayNameFor(model => model.isRated)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="canBeSubmittedLate" /> @Html.DisplayNameFor(model => model.canBeSubmittedLate)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="isLate" /> @Html.DisplayNameFor(model => model.isLate)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="classId" class="control-label"></label>
+                <input asp-for="classId" class="form-control" />
+                <span asp-validation-for="classId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
