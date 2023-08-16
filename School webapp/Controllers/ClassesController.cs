@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace School_webapp.Controllers
     public class ClassesController : Controller
     {
         private readonly School_webappContext _context;
-        private DbCommand command;
+
         public ClassesController(School_webappContext context)
         {
             _context = context;
@@ -27,34 +28,8 @@ namespace School_webapp.Controllers
         {
             using (var context = new MyDbContext())
             {
-                DbCommand command = context.Database.GetDbConnection().CreateCommand();
-                //counts table rows
-                command.CommandText = "SELECT count(*) FROM subject";
-                context.Database.OpenConnection();
-                using var counter = command.ExecuteReader();
-                //stores it into variaable 
-                counter.Read();
-                int count = counter.GetInt32(0);
-                counter.Close();
-                //gets relevant values from subject table
-                command.CommandText = "SELECT id, name, schoolYear FROM subject";
-                context.Database.OpenConnection();
-                using var result = command.ExecuteReader();
-                //creates an array to store data in
-                string[][] res = new string[count][];
-                //reads the data an stores it into the array
-                int i = 0;
-                while (result.Read())
-                {
-                    res[i] = new string[3];
-                    res[i][0] = result.GetInt32(0).ToString();
-                    res[i][1] = result.GetString(1);
-                    res[i][2] = result.GetInt32(2).ToString();
-                    i++;
-                }
-                //stores it into a ViewBag for it to be accessible from the view
-                ViewBag.res = res;
-
+                GetSubjectInfo(context);
+                GetTeacherInfo(context);
                 return _context.Class != null ?
                           View(await _context.Class.ToListAsync()) :
                           Problem("Entity set 'School_webappContext.Class'  is null.");
@@ -84,38 +59,12 @@ namespace School_webapp.Controllers
         {
             using (var context = new MyDbContext())
             {
-                DbCommand command = context.Database.GetDbConnection().CreateCommand();
-                //counts table rows
-                command.CommandText = "SELECT count(*) FROM subject";
-                context.Database.OpenConnection();
-                using var counter = command.ExecuteReader();
-                //stores it into variaable 
-                counter.Read();
-                int count = counter.GetInt32(0);
-                counter.Close();
-                //gets relevant values from subject table
-                command.CommandText = "SELECT id, name, schoolYear FROM subject";
-                context.Database.OpenConnection();
-                using var result = command.ExecuteReader();
-                //creates an array to store data in
-                string[][] res = new string[count][];
-                //reads the data an stores it into the array
-                int i = 0;
-                while (result.Read())
-                {
-                        res[i] = new string[3];
-                        res[i][0] = result.GetInt32(0).ToString();
-                        res[i][1] = result.GetString(1);
-                        res[i][2] = result.GetInt32(2).ToString();
-                i++;
-                }
-                //stores it into a ViewBag for it to be accessible from the view
-                ViewBag.res = res;
+                GetTeacherInfo(context);
+                GetSubjectInfo(context);
                 return View();
             }
 
         }
-
         // POST: Classes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -135,6 +84,11 @@ namespace School_webapp.Controllers
         // GET: Classes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            using (var context = new MyDbContext())
+            {
+                GetSubjectInfo(context);
+                GetTeacherInfo(context);
+            }
             if (id == null || _context.Class == null)
             {
                 return NotFound();
@@ -223,6 +177,66 @@ namespace School_webapp.Controllers
         private bool ClassExists(int id)
         {
           return (_context.Class?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private dynamic GetSubjectInfo(MyDbContext context)
+        {
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM subject";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT id, name, schoolYear FROM subject";
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            string[][] res = new string[count][];
+            //reads the data an stores it into the array
+            int i = 0;
+            while (result.Read())
+            {
+                res[i] = new string[3];
+                res[i][0] = result.GetInt32(0).ToString();
+                res[i][1] = result.GetString(1);
+                res[i][2] = result.GetInt32(2).ToString();
+                i++;
+            }
+            //stores it into a ViewBag for it to be accessible from the view
+            return ViewBag.subject = res;
+        }
+        private dynamic GetTeacherInfo(MyDbContext context)
+        {
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM teacher";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT id, name, lastName FROM teacher";
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            string[][] res = new string[count][];
+            //reads the data an stores it into the array
+            int i = 0;
+            while (result.Read())
+            {
+                res[i] = new string[3];
+                res[i][0] = result.GetInt32(0).ToString();
+                res[i][1] = result.GetString(1);
+                res[i][2] = result.GetString(2);
+                i++;
+            }
+            //stores it into a ViewBag for it to be accessible from the view
+            return ViewBag.teacher = res;
         }
     }
 

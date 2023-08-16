@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.teacherId)
+                Teacher
             </th>
             <th>
                 Subject
@@ -32,10 +32,10 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.teacherId)
-            </td>
+                    @ViewBag.teacher[i][2], @ViewBag.teacher[i][1]
+                </td>
             <td>
-                    @ViewBag.res[i][1] @ViewBag.res[i][2] 
+                    @ViewBag.subject[i][1] @ViewBag.subject[i][2] 
                 </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
