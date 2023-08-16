@@ -9,6 +9,10 @@ namespace School_webapp.Data
 {
     public class School_webappContext : DbContext
     {
+        public School_webappContext()
+        {
+        }
+
         public School_webappContext (DbContextOptions<School_webappContext> options)
             : base(options)
         {

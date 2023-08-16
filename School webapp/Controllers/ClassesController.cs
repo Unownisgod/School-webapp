@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -13,18 +15,50 @@ namespace School_webapp.Controllers
     public class ClassesController : Controller
     {
         private readonly School_webappContext _context;
-
+        private DbCommand command;
         public ClassesController(School_webappContext context)
         {
             _context = context;
+
         }
 
         // GET: Classes
         public async Task<IActionResult> Index()
         {
-              return _context.Class != null ? 
+            using (var context = new MyDbContext())
+            {
+                DbCommand command = context.Database.GetDbConnection().CreateCommand();
+                //counts table rows
+                command.CommandText = "SELECT count(*) FROM subject";
+                context.Database.OpenConnection();
+                using var counter = command.ExecuteReader();
+                //stores it into variaable 
+                counter.Read();
+                int count = counter.GetInt32(0);
+                counter.Close();
+                //gets relevant values from subject table
+                command.CommandText = "SELECT id, name, schoolYear FROM subject";
+                context.Database.OpenConnection();
+                using var result = command.ExecuteReader();
+                //creates an array to store data in
+                string[][] res = new string[count][];
+                //reads the data an stores it into the array
+                int i = 0;
+                while (result.Read())
+                {
+                    res[i] = new string[3];
+                    res[i][0] = result.GetInt32(0).ToString();
+                    res[i][1] = result.GetString(1);
+                    res[i][2] = result.GetInt32(2).ToString();
+                    i++;
+                }
+                //stores it into a ViewBag for it to be accessible from the view
+                ViewBag.res = res;
+
+                return _context.Class != null ?
                           View(await _context.Class.ToListAsync()) :
                           Problem("Entity set 'School_webappContext.Class'  is null.");
+            }
         }
 
         // GET: Classes/Details/5
@@ -48,7 +82,38 @@ namespace School_webapp.Controllers
         // GET: Classes/Create
         public IActionResult Create()
         {
-            return View();
+            using (var context = new MyDbContext())
+            {
+                DbCommand command = context.Database.GetDbConnection().CreateCommand();
+                //counts table rows
+                command.CommandText = "SELECT count(*) FROM subject";
+                context.Database.OpenConnection();
+                using var counter = command.ExecuteReader();
+                //stores it into variaable 
+                counter.Read();
+                int count = counter.GetInt32(0);
+                counter.Close();
+                //gets relevant values from subject table
+                command.CommandText = "SELECT id, name, schoolYear FROM subject";
+                context.Database.OpenConnection();
+                using var result = command.ExecuteReader();
+                //creates an array to store data in
+                string[][] res = new string[count][];
+                //reads the data an stores it into the array
+                int i = 0;
+                while (result.Read())
+                {
+                        res[i] = new string[3];
+                        res[i][0] = result.GetInt32(0).ToString();
+                        res[i][1] = result.GetString(1);
+                        res[i][2] = result.GetInt32(2).ToString();
+                i++;
+                }
+                //stores it into a ViewBag for it to be accessible from the view
+                ViewBag.res = res;
+                return View();
+            }
+
         }
 
         // POST: Classes/Create
@@ -158,6 +223,14 @@ namespace School_webapp.Controllers
         private bool ClassExists(int id)
         {
           return (_context.Class?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+    }
+
+    internal class MyDbContext : DbContext
+    {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=School_webapp.Data;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
     }
 }

@@ -19,23 +19,24 @@
                 @Html.DisplayNameFor(model => model.teacherId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SubjectId)
+                Subject
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
+    int i = 0;
+            <tr>
+                <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.teacherId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SubjectId)
-            </td>
+                    @ViewBag.res[i][1] @ViewBag.res[i][2] 
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
