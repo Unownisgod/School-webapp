@@ -56,7 +56,7 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,name,lastName,phone")] Tutor tutor)
+        public async Task<IActionResult> Create([Bind("Id,name,lastName,phone,address")] Tutor tutor)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,name,lastName,phone")] Tutor tutor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,name,lastName,phone,address")] Tutor tutor)
         {
             if (id != tutor.Id)
             {
