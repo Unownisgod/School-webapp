@@ -13,13 +13,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.name)
+                Name
             </th>
             <th>
                 Last Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.age)
+                Age
+            </th>            
+            <th>
+                Email
+            </th>
+            <th>
+                Phone
+            </th>
+            <th>
+                Address
             </th>
             <th></th>
         </tr>
@@ -35,13 +44,31 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.age)
+            </td>            
+            <td>
+                @Html.DisplayFor(modelItem => item.email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+                @Html.DisplayFor(modelItem => item.phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.address)
+            </td>
+            <td class="input-group">
+                <a class="btn btn-outline-primary me-3" asp-action="Edit" asp-route-id="@item.id">Edit</a>  
+                <form method="post">
+                    <button class="btn btn-outline-danger" type="submit" asp-action="Delete" asp-route-id="@item.id" onclick="return showAlert()">Delete</button>
+                </form> 
             </td>
         </tr>
 }
     </tbody>
 </table>
+<script>
+    function showAlert() {
+        var respuesta = confirm("Are you sure? You will delete it permanently");
+        if (!respuesta) {
+            event.preventDefault();
+        }
+    }
+</script>

@@ -27,24 +27,6 @@ namespace School_webapp.Controllers
                           Problem("Entity set 'School_webappContext.Teacher'  is null.");
         }
 
-        // GET: Teachers/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Teacher == null)
-            {
-                return NotFound();
-            }
-
-            var teacher = await _context.Teacher
-                .FirstOrDefaultAsync(m => m.id == id);
-            if (teacher == null)
-            {
-                return NotFound();
-            }
-
-            return View(teacher);
-        }
-
         // GET: Teachers/Create
         public IActionResult Create()
         {
@@ -56,7 +38,7 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,name,lastName,age")] Teacher teacher)
+        public async Task<IActionResult> Create([Bind("id,name,lastName,age,email,phone,address")] Teacher teacher)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +70,7 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,name,lastName,age")] Teacher teacher)
+        public async Task<IActionResult> Edit(int id, [Bind("id,name,lastName,age,email,phone,address")] Teacher teacher)
         {
             if (id != teacher.id)
             {

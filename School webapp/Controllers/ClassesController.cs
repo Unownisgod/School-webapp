@@ -94,25 +94,6 @@ namespace School_webapp.Controllers
             }
         }
 
-
-        // GET: Classes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Class == null)
-            {
-                return NotFound();
-            }
-
-            var @class = await _context.Class
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@class == null)
-            {
-                return NotFound();
-            }
-
-            return View(@class);
-        }
-
         // GET: Classes/Create
         public IActionResult Create()
         {
