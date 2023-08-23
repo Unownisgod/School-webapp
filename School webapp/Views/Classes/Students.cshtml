@@ -13,22 +13,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.name)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.lastName)
+                Last Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.address)
+                Address
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.age)
+                Age
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.schoolYear)
+                School year
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.section)
+                Section
             </th>
             <th></th>
         </tr>
@@ -55,11 +55,24 @@
                 @Html.DisplayFor(modelItem => item.section)
             </td>
             <td>
-                <a asp-controller="Students" asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                <a asp-controller="Students" asp-action="Details" asp-route-id="@item.id">Details</a> |
-                <a asp-controller="Classes" asp-action="DeleteStudent" asp-route-id="@item.id">Delete</a>
+                <div class="input-group">
+                    <a class="btn btn-outline-primary me-2" asp-action="Details" asp-route-id="@item.id" asp-controller="Students">Details</a>  
+
+                <form method="post">
+                    <input name="classId" value="@ViewBag.classId" hidden>
+                        <button type="submit" class="btn-outline-danger btn" asp-controller="Classes" asp-action="DeleteStudent" asp-route-id="@item.id " onclick="return showAlert()">Delete</button>
+                </form>
+                </div>
             </td>
         </tr>
 }
     </tbody>
 </table>
+<script>
+    function showAlert(){
+        var respuesta = confirm("Are you sure? You will delete it permanently");
+        if (!respuesta) {
+            event.preventDefault();
+        }
+    }
+</script>

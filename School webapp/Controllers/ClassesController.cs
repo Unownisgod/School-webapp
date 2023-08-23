@@ -233,6 +233,7 @@ namespace School_webapp.Controllers
         }
         public async Task<IActionResult> DeleteStudent(int? id)
         {
+            var classId = (Request.Form["classId"]);
             var context = new MyDbContext();
 
             if (id == null || _context.Student == null)
@@ -246,8 +247,8 @@ namespace School_webapp.Controllers
             {
                 return NotFound();
             }
+            ViewBag.classId = classId;
             GetStudentInfo(context, id);
-            ViewBag.id = id;
             return View(@student);
         }
         // POST: Classes/Delete/5
@@ -267,10 +268,10 @@ namespace School_webapp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Students));
+            return RedirectToAction("Students", new { id = classId });
         }
 
-            private bool ClassExists(int id)
+        private bool ClassExists(int id)
         {
           return (_context.Class?.Any(e => e.Id == id)).GetValueOrDefault();
         }
