@@ -33,14 +33,12 @@
                 <input asp-for="classId" value="@ViewBag.classId" class="form-control" name="classId" hidden />
                 <span asp-validation-for="classId" class="text-danger"hidden></span>
             </div>
-            <input type="submit" value=“Guardar” id="save" asp-route-id="@ViewBag.classId" asp-action="AddStudent" class="btn btn-primary mt-3 " >
-
+            <div class="input-group mt-3">
+                <input type="submit" value=“Guardar” id="save" asp-route-id="@ViewBag.classId" asp-action="AddStudent" class="btn btn-primary me-3">
+                <button type="reset" class="btn btn-primary" onclick="history.go(-1);">back</button>
+            </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Students">Back to List</a>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>

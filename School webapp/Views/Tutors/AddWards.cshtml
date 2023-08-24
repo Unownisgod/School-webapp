@@ -28,13 +28,10 @@
             <input name="tutorId" value="@ViewBag.id" hidden/>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary mt-3" asp-action="addWards"/>
+                <button type="reset" class="btn btn-primary" onclick="history.go(-1);">back</button>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
