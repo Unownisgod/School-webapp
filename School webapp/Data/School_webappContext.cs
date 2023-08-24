@@ -34,8 +34,6 @@ namespace School_webapp.Data
 
         public DbSet<School_webapp.Models.Activity>? Activity { get; set; }
 
-        public DbSet<School_webapp.Models.Attendance>? Attendance { get; set; }
-
         public DbSet<School_webapp.Models.Class>? Class { get; set; }
 
         public DbSet<School_webapp.Models.StudentClass>? StudentClass { get; set; }
@@ -43,5 +41,7 @@ namespace School_webapp.Data
         public DbSet<School_webapp.Models.Tutor>? Tutor { get; set; }
 
         public DbSet<School_webapp.Models.TutorStudent>? TutorStudent { get; set; }
+
+        public DbSet<School_webapp.Models.ActivityStudent>? ActivityStudent { get; set; }
     }
 }

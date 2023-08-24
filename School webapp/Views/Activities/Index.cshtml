@@ -13,31 +13,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.tittle)
+                @Html.DisplayNameFor(model => model.classId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.description)
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.deadline)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.calification)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.isSubmitted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.isRated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.canBeSubmittedLate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.isLate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.classId)
             </th>
             <th></th>
         </tr>
@@ -46,31 +31,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.tittle)
+                @Html.DisplayFor(modelItem => item.classId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.description)
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.deadline)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.calification)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.isSubmitted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.isRated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.canBeSubmittedLate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.isLate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.classId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
