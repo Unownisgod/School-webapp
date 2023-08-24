@@ -27,24 +27,6 @@ namespace School_webapp.Controllers
                           Problem("Entity set 'School_webappContext.Subject'  is null.");
         }
 
-        // GET: Subjects/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Subject == null)
-            {
-                return NotFound();
-            }
-
-            var subject = await _context.Subject
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
-
-            return View(subject);
-        }
-
         // GET: Subjects/Create
         public IActionResult Create()
         {
@@ -115,24 +97,6 @@ namespace School_webapp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(subject);
-        }
-
-        // GET: Subjects/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Subject == null)
-            {
-                return NotFound();
-            }
-
-            var subject = await _context.Subject
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
-
             return View(subject);
         }
 
