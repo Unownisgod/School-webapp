@@ -176,24 +176,6 @@ namespace School_webapp.Controllers
             return View(@class);
         }
 
-        // GET: Classes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Class == null)
-            {
-                return NotFound();
-            }
-
-            var @class = await _context.Class
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@class == null)
-            {
-                return NotFound();
-            }
-
-            return View(@class);
-        }
-
         // POST: Classes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -212,26 +194,7 @@ namespace School_webapp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        public async Task<IActionResult> DeleteStudent(int? id)
-        {
-            var classId = (Request.Form["classId"]);
-            var context = new MyDbContext();
 
-            if (id == null || _context.Student == null)
-            {
-                return NotFound();
-            }
-
-            var @student = await _context.Student
-                .FirstOrDefaultAsync(m => m.id == id);
-            if (@student == null)
-            {
-                return NotFound();
-            }
-            ViewBag.classId = classId;
-            GetStudentInfo(context, id);
-            return View(@student);
-        }
         // POST: Classes/Delete/5
         [HttpPost, ActionName("DeleteStudent")]
         [ValidateAntiForgeryToken]
