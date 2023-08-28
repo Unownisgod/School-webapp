@@ -9,45 +9,28 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.classId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.deadline)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.classId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.deadline)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    @using System.Globalization;
+    @{CultureInfo culture = new CultureInfo("en-EU");}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+            @foreach (var item in Model){
+            string desc = @item.Description.Substring(0, Math.Min(200, item.Description.Length));
+            if (item.Description.Length > 200)
+            {
+                desc += "..."; 
+            }
+            <div class="d-inline">
+                    <span class="float-start"><a asp-controller="ActivityStudents" asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a></span>
+                    <span class="float-end badge @(DateTime.Today > item.deadline ? "bg-danger" : item.deadline.Subtract(DateTime.Today).Days <= 7? "bg-warning" : "bg-success") rounded">Deadline: @item.deadline.Date.ToString("D", culture)</span>
+                    <br>
+                    <p class="" style="color:gray; font-size:12px;">@desc</p>
+                    <hr>
+                </div>
+            }
+
+
+
+            
+    </div>
+</div>
