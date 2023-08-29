@@ -36,7 +36,7 @@ namespace School_webapp.Controllers
             }
 
             var activityStudent = await _context.ActivityStudent
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.activityStudentId == id);
             if (activityStudent == null)
             {
                 return NotFound();
@@ -56,7 +56,7 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,studentId,activityId,calification,commentary,isSubmited,isRated,canBeSubmitedLate,isLate,submitDate")] ActivityStudent activityStudent)
+        public async Task<IActionResult> Create([Bind("Id,studentId,activityId,calification,commentary,isSubmitted,isRated,canBeSubmittedLate,isLate,submitDate")] ActivityStudent activityStudent)
         {
             if (ModelState.IsValid)
             {
@@ -88,9 +88,9 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,studentId,activityId,calification,commentary,isSubmited,isRated,canBeSubmitedLate,isLate,submitDate")] ActivityStudent activityStudent)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,studentId,activityId,calification,commentary,isSubmitted,isRated,canBeSubmittedLate,isLate,submitDate")] ActivityStudent activityStudent)
         {
-            if (id != activityStudent.Id)
+            if (id != activityStudent.activityStudentId)
             {
                 return NotFound();
             }
@@ -104,7 +104,7 @@ namespace School_webapp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ActivityStudentExists(activityStudent.Id))
+                    if (!ActivityStudentExists(activityStudent.activityStudentId))
                     {
                         return NotFound();
                     }
@@ -127,7 +127,7 @@ namespace School_webapp.Controllers
             }
 
             var activityStudent = await _context.ActivityStudent
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.activityId== id);
             if (activityStudent == null)
             {
                 return NotFound();
@@ -157,7 +157,7 @@ namespace School_webapp.Controllers
 
         private bool ActivityStudentExists(int id)
         {
-          return (_context.ActivityStudent?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.ActivityStudent?.Any(e => e.activityStudentId == id)).GetValueOrDefault();
         }
     }
 }

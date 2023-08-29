@@ -36,10 +36,10 @@
             @Html.DisplayFor(model => model.commentary)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.isSubmited)
+            @Html.DisplayNameFor(model => model.isSubmitted)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.isSubmited)
+            @Html.DisplayFor(model => model.isSubmitted)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.isRated)
@@ -48,10 +48,10 @@
             @Html.DisplayFor(model => model.isRated)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.canBeSubmitedLate)
+            @Html.DisplayNameFor(model => model.canBeSubmittedLate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.canBeSubmitedLate)
+            @Html.DisplayFor(model => model.canBeSubmittedLate)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.isLate)
@@ -68,7 +68,7 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="activityId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

@@ -6,9 +6,6 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
     @using System.Globalization;
     @{CultureInfo culture = new CultureInfo("en-EU");}
 
@@ -21,7 +18,7 @@
                 desc += "..."; 
             }
             <div class="d-inline">
-                    <span class="float-start"><a asp-controller="ActivityStudents" asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a></span>
+                <span class="float-start"><a asp-controller="ActivityStudents" asp-action="Details" asp-route-id="@item.activityId">@Html.DisplayFor(modelItem => item.Title)</a></span>
                     <span class="float-end badge @(DateTime.Today > item.deadline ? "bg-danger" : item.deadline.Subtract(DateTime.Today).Days <= 7? "bg-warning" : "bg-success") rounded">Deadline: @item.deadline.Date.ToString("D", culture)</span>
                     <br>
                     <p class="" style="color:gray; font-size:12px;">@desc</p>

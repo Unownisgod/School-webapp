@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ namespace School_webapp.Controllers
             }
 
             var activity = await _context.Activity
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.activityId == id);
             if (activity == null)
             {
                 return NotFound();
@@ -48,23 +49,89 @@ namespace School_webapp.Controllers
         // GET: Activities/Create
         public IActionResult Create()
         {
+            getClassList();
             return View();
         }
 
-        // POST: Activities/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,classId,Title,Description,deadline")] Activity activity)
+        private dynamic getClassList()
         {
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM class";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT id, name FROM class";
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            string[][] res = new string[count][];
+            //reads the data an stores it into the array
+            int i = 0;
+            while (result.Read())
+            {
+                res[i] = new string[2];
+                res[i][0] = result.GetInt32(0).ToString();
+                res[i][1] = result.GetString(1);
+                i++;
+            }
+            //stores it into a ViewBag for it to be accessible from the view
+            return ViewBag.classes = res;
+        }
+    
+
+    // POST: Activities/Create
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ActivityViewModel activityViewModel)
+        {
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM student";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT student.id FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = "+activityViewModel.Activity.classId;
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            List<ActivityStudent> res = new List<ActivityStudent>();
+            //reads the data an stores it into the array
             if (ModelState.IsValid)
             {
-                _context.Add(activity);
+                _context.Add(activityViewModel.Activity);
+                await _context.SaveChangesAsync();
+                while (result.Read())
+                {
+                    res.Add(new ActivityStudent { activityId = activityViewModel.Activity.activityId, 
+                        studentId=result.GetInt32(0),
+                        calification = activityViewModel.ActivityStudent.calification,
+                        isSubmitted = activityViewModel.ActivityStudent.isSubmitted,
+                        isRated = false,
+                        canBeSubmittedLate = activityViewModel.ActivityStudent.canBeSubmittedLate,
+                        isLate = false,
+                        commentary = activityViewModel.ActivityStudent.commentary,
+                        submitDate = activityViewModel.ActivityStudent.submitDate,
+                    });
+                }
+                _context.AddRange(res);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(activity);
+            getClassList();
+            return View(activityViewModel.Activity);
         }
 
         // GET: Activities/Edit/5
@@ -90,7 +157,7 @@ namespace School_webapp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,classId,Title,Description,deadline")] Activity activity)
         {
-            if (id != activity.Id)
+            if (id != activity.activityId)
             {
                 return NotFound();
             }
@@ -104,7 +171,7 @@ namespace School_webapp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ActivityExists(activity.Id))
+                    if (!ActivityExists(activity.activityId))
                     {
                         return NotFound();
                     }
@@ -127,7 +194,7 @@ namespace School_webapp.Controllers
             }
 
             var activity = await _context.Activity
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.activityId == id);
             if (activity == null)
             {
                 return NotFound();
@@ -157,7 +224,7 @@ namespace School_webapp.Controllers
 
         private bool ActivityExists(int id)
         {
-          return (_context.Activity?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Activity?.Any(e => e.activityId == id)).GetValueOrDefault();
         }
     }
 }

@@ -35,10 +35,10 @@
             @Html.DisplayFor(model => model.commentary)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.isSubmited)
+            @Html.DisplayNameFor(model => model.isSubmitted)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.isSubmited)
+            @Html.DisplayFor(model => model.isSubmitted)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.isRated)
@@ -47,10 +47,10 @@
             @Html.DisplayFor(model => model.isRated)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.canBeSubmitedLate)
+            @Html.DisplayNameFor(model => model.canBeSubmittedLate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.canBeSubmitedLate)
+            @Html.DisplayFor(model => model.canBeSubmittedLate)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.isLate)
@@ -67,6 +67,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.activityId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
