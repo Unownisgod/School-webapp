@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace School_webapp.Controllers
 {
@@ -50,6 +51,46 @@ namespace School_webapp.Controllers
         public IActionResult Create()
         {
             getClassList();
+            return View();
+        }
+        public IActionResult Students(int? id, int activityId)
+        {
+            //select the students from the database
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //gets the class
+            command.CommandText = "SELECT classId FROM class join Activity on class.id = activity.classid where activity.activityid = " + id;
+            context.Database.OpenConnection();
+            DbDataReader classId = command.ExecuteReader();
+            classId.Read();
+            int classid = classId.GetInt32(0);
+            classId.Close();
+            //counts table rows
+            command.CommandText = "SELECT count(*) FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = " + classid;
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT ActivityStudent.isSubmitted, student.name, student.lastName FROM student JOIN studentClass ON student.id = studentclass.studentId JOIN Activity ON Activity.classId = StudentClass.classId JOIN ActivityStudent ON activity.activityid = ActivityStudent.activityId and student.id = ActivityStudent.studentId where studentClass.classid = " + classid+"and activity.activityId = "+id+"order by 1 desc";
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            string[][] res = new string[count][];
+            //reads the data an stores it into the array
+            int i = 0;
+            while (result.Read())
+            {
+                res[i] = new string[3];
+                res[i][0] = result.GetBoolean(0).ToString();
+                res[i][1] = result.GetString(1);
+                res[i][2] = result.GetString(2);
+                i++;
+            }
+            //stores it into a ViewBag for it to be accessible from the view
+            ViewBag.students = res;
             return View();
         }
 
