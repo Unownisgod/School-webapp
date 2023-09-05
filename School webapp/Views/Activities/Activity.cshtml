@@ -1,7 +1,76 @@
-﻿
+﻿@model School_webapp.Models.ActivityViewModel
+
 @{
     ViewData["Title"] = "Activity";
+
+
+    <div class="container">
+        <div class="bg-opacity-50 bg-dark rounded-3" style="--bs-bg-opacity: .2;">
+            <div class="m-2">
+                <h1>@Model.Activity.Title</h1>
+                <hr />
+                <p>@Model.Activity.Description</p>
+                <br /><br />
+                <div class="justify-content-center">
+                    <table class="table table-hover table-responsive table-striped">
+                        <tr >
+                            <td colspan="1" class="bg-opacity-50 @(Model.ActivityStudent.calification>=5? "bg-success" : "bg-danger")">
+                                <h5>Calification</h5>
+                            </td>
+                            <td colspan="3" class="bg-opacity-50 @(Model.ActivityStudent.calification>=5? "bg-success" : "bg-danger")">
+                                <p>@Model.ActivityStudent.calification</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <h5>Commentary</h5>
+                            </td>
+                            <td colspan="3">
+                                <p>@Model.ActivityStudent.commentary</p>
+                            </td>
+                        </tr>
+                        @{
+                            DateTime deadline = Model.Activity.deadline;
+                            DateTime now = DateTime.Now;
+                            bool canBeSubmittedLate = Model.ActivityStudent.canBeSubmittedLate;
+                            string style = "";
+                            if (now > deadline)
+                            {
+                                style = "bg-danger";
+                            }
+                            else if(@Model.ActivityStudent.isSubmitted)
+                            {
+                                style = "bg-success";
+                            }
+
+                            <tr>
+
+                                <td colspan="1" class="@style bg-opacity-50">
+                                    <h5>Time left</h5>
+                                </td>
+                                @{
+                                    if (Model.ActivityStudent.isSubmitted)
+                                    {
+                                        <td colspan="3" class="@style bg-opacity-50">
+                                            <p>@(Model.Activity.deadline.Subtract(@Model.ActivityStudent.submitDate.Value).ToString("d' días, 'h':'m':'s"))</p>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td colspan="3" class="@style bg-opacity-50">
+                                            <p>@(Model.Activity.deadline.Subtract(DateTime.Now).ToString("d' días, 'h':'m':'s"))</p>
+                                        </td>
+                                    }
+                                }
+
+                            </tr>
+                        }
+                    </table>
+                    <input type="file" @(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? "" : "hidden")>
+
+                    </input>
+                </div>
+            </div>
+        </div>
+    </div>
 }
-
-<h1>Activity</h1>
-

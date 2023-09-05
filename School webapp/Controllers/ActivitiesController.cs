@@ -74,7 +74,7 @@ namespace School_webapp.Controllers
             int count = counter.GetInt32(0);
             counter.Close();
             //gets relevant values from subject table
-            command.CommandText = "SELECT ActivityStudent.isSubmitted, student.name, student.lastName FROM student JOIN studentClass ON student.id = studentclass.studentId JOIN Activity ON Activity.classId = StudentClass.classId JOIN ActivityStudent ON activity.activityid = ActivityStudent.activityId and student.id = ActivityStudent.studentId where studentClass.classid = " + classid+"and activity.activityId = "+id+"order by 1 desc";
+            command.CommandText = "SELECT ActivityStudent.isSubmitted, student.name, student.lastName, activitystudent.activitystudentid FROM student JOIN studentClass ON student.id = studentclass.studentId JOIN Activity ON Activity.classId = StudentClass.classId JOIN ActivityStudent ON activity.activityid = ActivityStudent.activityId and student.id = ActivityStudent.studentId where studentClass.classid = " + classid+"and activity.activityId = "+id+"order by 1 desc";
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
@@ -83,10 +83,11 @@ namespace School_webapp.Controllers
             int i = 0;
             while (result.Read())
             {
-                res[i] = new string[3];
+                res[i] = new string[4];
                 res[i][0] = result.GetBoolean(0).ToString();
                 res[i][1] = result.GetString(1);
                 res[i][2] = result.GetString(2);
+                res[i][3] = result.GetInt32(3).ToString();
                 i++;
             }
             //stores it into a ViewBag for it to be accessible from the view
@@ -261,6 +262,30 @@ namespace School_webapp.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        // GET: Activities/Activity/5
+        public async Task<IActionResult> Activity(int? id)
+        {
+            if (id == null || _context.ActivityStudent == null)
+            {
+                return NotFound();
+            }
+            /* ActivityStudent activity = await _context.ActivityStudent
+                 .FirstOrDefaultAsync(m => m.activityStudentId== id);*/
+            var query = from a in _context.ActivityStudent
+                        join b in _context.Activity on a.activityId equals b.activityId
+                        where a.activityStudentId == id
+                        select new { a, b }; // proyecta el resultado en un tipo anónimo con las propiedades a y b
+            var actst = query.FirstOrDefault().a;
+            var act = query.FirstOrDefault().b;
+            ActivityViewModel activityViewModel = new ActivityViewModel(act, actst);
+
+
+            if (activityViewModel == null)
+            {
+                return NotFound();
+            }
+            return View(activityViewModel);
         }
 
         private bool ActivityExists(int id)

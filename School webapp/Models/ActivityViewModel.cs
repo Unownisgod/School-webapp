@@ -8,5 +8,11 @@
         {
             
         }
+
+        public ActivityViewModel(Activity act, ActivityStudent actst)
+        {
+            this.Activity = act;
+            this.ActivityStudent = actst;
+        }
     }
 }
