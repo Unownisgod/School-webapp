@@ -52,23 +52,20 @@
                                     if (Model.ActivityStudent.isSubmitted)
                                     {
                                         <td colspan="3" class="@style bg-opacity-50">
-                                            <p>@(Model.Activity.deadline.Subtract(@Model.ActivityStudent.submitDate.Value).ToString("d' días, 'h':'m':'s"))</p>
+                                            <p>@(Model.Activity.deadline.Subtract(@Model.ActivityStudent.submitDate.Value).ToString("d' días, 'hh':'mm':'ss"))</p>
                                         </td>
                                     }
                                     else
                                     {
                                         <td colspan="3" class="@style bg-opacity-50">
-                                            <p>@(Model.Activity.deadline.Subtract(DateTime.Now).ToString("d' días, 'h':'m':'s"))</p>
+                                            <p>@(Model.Activity.deadline.Subtract(DateTime.Now).ToString("d' días, 'hh':'mm':'ss"))</p>
                                         </td>
                                     }
                                 }
-
                             </tr>
                         }
                     </table>
-                    <input type="file" @(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? "" : "hidden")>
-
-                    </input>
+                    <input type="file" @(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? "" : "hidden")/>
                 </div>
             </div>
         </div>

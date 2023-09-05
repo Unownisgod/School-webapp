@@ -1,4 +1,4 @@
-﻿@model School_webapp.Models.Activity
+﻿@model School_webapp.Models.ActivityViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,31 +10,58 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="activityId" />
-            <div class="form-group">
-                <label asp-for="classId" class="control-label"></label>
-                <input asp-for="classId" class="form-control" />
-                <span asp-validation-for="classId" class="text-danger"></span>
+            <div class="input-group">
+                <select asp-for="Activity.classId" class="form-control">
+                    @{
+                        foreach (var row in ViewBag.classes)
+                        {
+                            @Html.Raw("<option value='" + row[0] + "'>"+row[1]+ "</option>")
+                        }
+                    }
+                </select>
+                <span class="input-group-btn">
+                    <a asp-controller="Classes" asp-action="create" class="btn btn-primary" type="button">+</a>
+                </span>
             </div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                @Html.LabelFor(model => model.Activity.deadline ,new {@class = "control-label"})
+                @Html.EditorFor(model => model.Activity.deadline, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Activity.deadline, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                @Html.LabelFor(model => model.Activity.Title, new { @class = "control-label" })
+                @Html.EditorFor(model => model.Activity.Title, new { htmlAttributes = new { @class = "form-control" , @maxlength = "100" } })
+                @Html.ValidationMessageFor(model => model.Activity.Title, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
-                <label asp-for="deadline" class="control-label"></label>
-                <input asp-for="deadline" class="form-control" />
-                <span asp-validation-for="deadline" class="text-danger"></span>
+                @Html.LabelFor(model => model.Activity.Description, new { @class = "control-label" })
+                @Html.EditorFor(model => model.Activity.Description, new { htmlAttributes = new { @class = "form-control"} })
+                @Html.ValidationMessageFor(model => model.Activity.Description, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group" hidden>
+                <label asp-for="ActivityStudent.isSubmitted" class="control-label"></label>
+                <input type="checkbox" value="false" asp-for="ActivityStudent.isSubmitted" class="form-control" />
+                <span asp-validation-for="ActivityStudent.isSubmitted" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden>
+                <label asp-for="ActivityStudent.isRated" class="control-label"></label>
+                <input type="checkbox" value="false" asp-for="ActivityStudent.isRated" class="form-control" />
+                <span asp-validation-for="ActivityStudent.isRated" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                @Html.LabelFor(model => model.ActivityStudent.canBeSubmittedLate, new { @class = "control-label" })
+                @Html.EditorFor(model => model.ActivityStudent.canBeSubmittedLate)
+                @Html.ValidationMessageFor(model => model.ActivityStudent.canBeSubmittedLate, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-check-input" hidden>
+                <input type="checkbox" value="false" asp-for="ActivityStudent.isLate" class="form-control" />
+                <label asp-for="ActivityStudent.isLate" class="control-label"></label>
+                <span asp-validation-for="ActivityStudent.isLate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -45,5 +72,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -183,13 +183,15 @@ namespace School_webapp.Controllers
             {
                 return NotFound();
             }
-
+            getClassList();
             var activity = await _context.Activity.FindAsync(id);
-            if (activity == null)
+            var activityStudent = await _context.ActivityStudent.FindAsync(id);
+            ActivityViewModel activityViewModel = new ActivityViewModel(activity, activityStudent);
+            if (activityViewModel == null)
             {
                 return NotFound();
             }
-            return View(activity);
+            return View(activityViewModel);
         }
 
         // POST: Activities/Edit/5
@@ -197,34 +199,51 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,classId,Title,Description,deadline")] Activity activity)
+        public async Task<IActionResult> Edit(int id, ActivityViewModel activityViewModel)
         {
-            if (id != activity.activityId)
-            {
-                return NotFound();
-            }
-
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM student";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT student.id FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = " + activityViewModel.Activity.classId;
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            List<ActivityStudent> res = new List<ActivityStudent>();
+            //reads the data an stores it into the array
             if (ModelState.IsValid)
             {
-                try
+                activityViewModel.ActivityStudent.activityId = activityViewModel.Activity.activityId = id;
+                _context.Update(activityViewModel.Activity);
+                await _context.SaveChangesAsync();
+                while (result.Read())
                 {
-                    _context.Update(activity);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ActivityExists(activity.activityId))
+                    res.Add(new ActivityStudent
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                        activityId = activityViewModel.Activity.activityId,
+                        studentId = result.GetInt32(0),
+                        calification = activityViewModel.ActivityStudent.calification,
+                        isSubmitted = activityViewModel.ActivityStudent.isSubmitted,
+                        isRated = false,
+                        canBeSubmittedLate = activityViewModel.ActivityStudent.canBeSubmittedLate,
+                        isLate = false,
+                        commentary = activityViewModel.ActivityStudent.commentary,
+                        submitDate = activityViewModel.ActivityStudent.submitDate,
+                    });
                 }
+                _context.UpdateRange(res);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(activity);
+            getClassList();
+            return View(activityViewModel.Activity);
         }
 
         // GET: Activities/Delete/5
