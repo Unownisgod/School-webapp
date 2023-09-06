@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using School_webapp.Models;
-using System.Diagnostics;
 
 namespace School_webapp.Controllers
 {

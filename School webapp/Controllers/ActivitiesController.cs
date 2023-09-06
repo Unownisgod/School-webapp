@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Data.Common;
 
 namespace School_webapp.Controllers
 {
@@ -24,9 +18,9 @@ namespace School_webapp.Controllers
         // GET: Activities
         public async Task<IActionResult> Index()
         {
-              return _context.Activity != null ? 
-                          View(await _context.Activity.ToListAsync()) :
-                          Problem("Entity set 'School_webappContext.Activity'  is null.");
+            return _context.Activity != null ?
+                        View(await _context.Activity.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.Activity'  is null.");
         }
 
         // GET: Activities/Details/5
@@ -74,7 +68,7 @@ namespace School_webapp.Controllers
             int count = counter.GetInt32(0);
             counter.Close();
             //gets relevant values from subject table
-            command.CommandText = "SELECT ActivityStudent.isSubmitted, student.name, student.lastName, activitystudent.activitystudentid FROM student JOIN studentClass ON student.id = studentclass.studentId JOIN Activity ON Activity.classId = StudentClass.classId JOIN ActivityStudent ON activity.activityid = ActivityStudent.activityId and student.id = ActivityStudent.studentId where studentClass.classid = " + classid+"and activity.activityId = "+id+"order by 1 desc";
+            command.CommandText = "SELECT ActivityStudent.isSubmitted, student.name, student.lastName, activitystudent.activitystudentid FROM student JOIN studentClass ON student.id = studentclass.studentId JOIN Activity ON Activity.classId = StudentClass.classId JOIN ActivityStudent ON activity.activityid = ActivityStudent.activityId and student.id = ActivityStudent.studentId where studentClass.classid = " + classid + "and activity.activityId = " + id + "order by 1 desc";
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
@@ -125,12 +119,12 @@ namespace School_webapp.Controllers
             //stores it into a ViewBag for it to be accessible from the view
             return ViewBag.classes = res;
         }
-    
 
-    // POST: Activities/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
+
+        // POST: Activities/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ActivityViewModel activityViewModel)
         {
@@ -145,7 +139,7 @@ namespace School_webapp.Controllers
             int count = counter.GetInt32(0);
             counter.Close();
             //gets relevant values from subject table
-            command.CommandText = "SELECT student.id FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = "+activityViewModel.Activity.classId;
+            command.CommandText = "SELECT student.id FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = " + activityViewModel.Activity.classId;
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
@@ -157,8 +151,10 @@ namespace School_webapp.Controllers
                 await _context.SaveChangesAsync();
                 while (result.Read())
                 {
-                    res.Add(new ActivityStudent { activityId = activityViewModel.Activity.activityId, 
-                        studentId=result.GetInt32(0),
+                    res.Add(new ActivityStudent
+                    {
+                        activityId = activityViewModel.Activity.activityId,
+                        studentId = result.GetInt32(0),
                         calification = activityViewModel.ActivityStudent.calification,
                         isSubmitted = activityViewModel.ActivityStudent.isSubmitted,
                         isRated = false,
@@ -278,7 +274,7 @@ namespace School_webapp.Controllers
             {
                 _context.Activity.Remove(activity);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -309,7 +305,7 @@ namespace School_webapp.Controllers
 
         private bool ActivityExists(int id)
         {
-          return (_context.Activity?.Any(e => e.activityId == id)).GetValueOrDefault();
+            return (_context.Activity?.Any(e => e.activityId == id)).GetValueOrDefault();
         }
     }
 }

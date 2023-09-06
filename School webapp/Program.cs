@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
+using Microsoft.AspNetCore.Identity;
+using School_webapp.Models;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<School_webappContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("School_webappContext") ?? throw new InvalidOperationException("Connection string 'School_webappContext' not found.")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -22,6 +26,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 

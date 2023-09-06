@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
@@ -22,9 +17,9 @@ namespace School_webapp.Controllers
         // GET: ActivityStudents
         public async Task<IActionResult> Index()
         {
-              return _context.ActivityStudent != null ? 
-                          View(await _context.ActivityStudent.ToListAsync()) :
-                          Problem("Entity set 'School_webappContext.ActivityStudent'  is null.");
+            return _context.ActivityStudent != null ?
+                        View(await _context.ActivityStudent.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.ActivityStudent'  is null.");
         }
 
         // GET: ActivityStudents/Details/5
@@ -127,7 +122,7 @@ namespace School_webapp.Controllers
             }
 
             var activityStudent = await _context.ActivityStudent
-                .FirstOrDefaultAsync(m => m.activityId== id);
+                .FirstOrDefaultAsync(m => m.activityId == id);
             if (activityStudent == null)
             {
                 return NotFound();
@@ -150,14 +145,14 @@ namespace School_webapp.Controllers
             {
                 _context.ActivityStudent.Remove(activityStudent);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ActivityStudentExists(int id)
         {
-          return (_context.ActivityStudent?.Any(e => e.activityStudentId == id)).GetValueOrDefault();
+            return (_context.ActivityStudent?.Any(e => e.activityStudentId == id)).GetValueOrDefault();
         }
     }
 }

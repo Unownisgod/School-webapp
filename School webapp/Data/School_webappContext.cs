@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using School_webapp.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace School_webapp.Data
 {
@@ -13,7 +8,7 @@ namespace School_webapp.Data
         {
         }
 
-        public School_webappContext (DbContextOptions<School_webappContext> options)
+        public School_webappContext(DbContextOptions<School_webappContext> options)
             : base(options)
         {
         }

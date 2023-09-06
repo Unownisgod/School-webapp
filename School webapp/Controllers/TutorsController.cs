@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
+using System.Data.Common;
 
 namespace School_webapp.Controllers
 {
@@ -23,9 +18,9 @@ namespace School_webapp.Controllers
         // GET: Tutors
         public async Task<IActionResult> Index()
         {
-              return _context.Tutor != null ? 
-                          View(await _context.Tutor.ToListAsync()) :
-                          Problem("Entity set 'School_webappContext.Tutor'  is null.");
+            return _context.Tutor != null ?
+                        View(await _context.Tutor.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.Tutor'  is null.");
         }
 
         // GET: Tutors/Create
@@ -33,7 +28,7 @@ namespace School_webapp.Controllers
         {
             return View();
         }
-        
+
         // GET: Tutors/AddWards
         public IActionResult AddWards(int? id)
         {
@@ -90,7 +85,7 @@ namespace School_webapp.Controllers
                 return NotFound();
             }
             return View(tutor);
-        }        
+        }
         // GET: Tutors/Wards/5
         public async Task<IActionResult> Wards(int? id)
         {
@@ -130,7 +125,7 @@ namespace School_webapp.Controllers
             var context = new MyDbContext();
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             //counts table rows     
-            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = "+id+");";
+            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = " + id + ");";
             context.Database.OpenConnection();
             DbDataReader counter = command.ExecuteReader();
             //stores it into variaable 
@@ -138,7 +133,7 @@ namespace School_webapp.Controllers
             int count = counter.GetInt32(0);
             counter.Close();
             //gets relevant values from subject table
-            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = " + id+" );";
+            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = " + id + " );";
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
@@ -206,14 +201,14 @@ namespace School_webapp.Controllers
             {
                 _context.Tutor.Remove(tutor);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TutorExists(int id)
         {
-          return (_context.Tutor?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Tutor?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
+using System.Data;
+using System.Data.Common;
 
 namespace School_webapp.Controllers
 {
@@ -190,7 +183,7 @@ namespace School_webapp.Controllers
             {
                 _context.Class.Remove(@class);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -217,7 +210,7 @@ namespace School_webapp.Controllers
 
         private bool ClassExists(int id)
         {
-          return (_context.Class?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Class?.Any(e => e.Id == id)).GetValueOrDefault();
         }
         private dynamic GetStudentList(MyDbContext context)
         {
@@ -371,11 +364,11 @@ namespace School_webapp.Controllers
             //stores it into a ViewBag for it to be accessible from the view
             return ViewBag.subjectList = res;
         }
-    private dynamic GetStudentInfo(MyDbContext context, int? id)
+        private dynamic GetStudentInfo(MyDbContext context, int? id)
         {
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             //counts table rows     
-            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = "+id+");";
+            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = " + id + ");";
             context.Database.OpenConnection();
             DbDataReader counter = command.ExecuteReader();
             //stores it into variaable 
@@ -383,7 +376,7 @@ namespace School_webapp.Controllers
             int count = counter.GetInt32(0);
             counter.Close();
             //gets relevant values from subject table
-            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = "+id+" ); ";
+            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = " + id + " ); ";
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
@@ -401,13 +394,13 @@ namespace School_webapp.Controllers
             //stores it into a ViewBag for it to be accessible from the view
             return ViewBag.StudentList = res;
         }
-    }        
     }
+}
 
-    internal class MyDbContext : DbContext
+internal class MyDbContext : DbContext
+{
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=School_webapp.Data;Trusted_Connection=True;MultipleActiveResultSets=true");
-        }
+        optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=School_webapp.Data;Trusted_Connection=True;MultipleActiveResultSets=true");
     }
+}

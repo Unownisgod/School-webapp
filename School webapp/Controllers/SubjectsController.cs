@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
@@ -22,9 +17,9 @@ namespace School_webapp.Controllers
         // GET: Subjects
         public async Task<IActionResult> Index()
         {
-              return _context.Subject != null ? 
-                          View(await _context.Subject.ToListAsync()) :
-                          Problem("Entity set 'School_webappContext.Subject'  is null.");
+            return _context.Subject != null ?
+                        View(await _context.Subject.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.Subject'  is null.");
         }
 
         // GET: Subjects/Create
@@ -114,14 +109,14 @@ namespace School_webapp.Controllers
             {
                 _context.Subject.Remove(subject);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SubjectExists(int id)
         {
-          return (_context.Subject?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Subject?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
