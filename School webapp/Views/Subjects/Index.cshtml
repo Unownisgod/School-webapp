@@ -1,0 +1,50 @@
+﻿@model IEnumerable<School_webapp.Models.Subject>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                School Year
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.schoolYear)
+            </td>
+            <td class="input-group">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary me-2">Edit</a> 
+                <form method="post">
+                <button asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" onclick="showAlert()">Delete</button>
+                </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<script>
+    function showAlert() {
+        var respuesta = confirm("Are you sure? You will delete it permanently");
+        if (!respuesta) {
+            event.preventDefault();
+        }
+    }
+</script>
