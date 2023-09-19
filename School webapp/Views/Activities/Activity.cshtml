@@ -13,7 +13,7 @@
                 <br /><br />
                 <div class="justify-content-center">
                     <table class="table table-hover table-responsive table-striped">
-                        <tr >
+                        <tr>
                             <td colspan="1" class="bg-opacity-50 @(Model.ActivityStudent.calification>=5? "bg-success" : "bg-danger")">
                                 <h5>Calification</h5>
                             </td>
@@ -38,7 +38,7 @@
                             {
                                 style = "bg-danger";
                             }
-                            else if(@Model.ActivityStudent.isSubmitted)
+                            else if (@Model.ActivityStudent.isSubmitted)
                             {
                                 style = "bg-success";
                             }
@@ -65,7 +65,7 @@
                             </tr>
                         }
                     </table>
-                    <input type="file" @(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? "" : "hidden")/>
+                    <input type="file" @(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? "" : "hidden") />
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,14 +21,18 @@ namespace School_webapp.Controllers
         }
 
         // GET: Subjects
+        [Authorize(Roles = "Admin, Teacher")]
+
         public async Task<IActionResult> Index()
         {
-              return _context.Subject != null ? 
-                          View(await _context.Subject.ToListAsync()) :
-                          Problem("Entity set 'School_webappContext.Subject'  is null.");
+            return _context.Subject != null ?
+                        View(await _context.Subject.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.Subject'  is null.");
         }
 
         // GET: Subjects/Create
+        [Authorize(Roles = "Admin")]
+
         public IActionResult Create()
         {
             return View();
@@ -38,6 +43,8 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Create([Bind("Id,Name,schoolYear")] Subject subject)
         {
             if (ModelState.IsValid)
@@ -50,6 +57,8 @@ namespace School_webapp.Controllers
         }
 
         // GET: Subjects/Edit/5
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Subject == null)
@@ -69,6 +78,7 @@ namespace School_webapp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,schoolYear")] Subject subject)
         {
@@ -101,6 +111,8 @@ namespace School_webapp.Controllers
         }
 
         // POST: Subjects/Delete/5
+        [Authorize(Roles = "Admin")]
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -114,14 +126,14 @@ namespace School_webapp.Controllers
             {
                 _context.Subject.Remove(subject);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SubjectExists(int id)
         {
-          return (_context.Subject?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Subject?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

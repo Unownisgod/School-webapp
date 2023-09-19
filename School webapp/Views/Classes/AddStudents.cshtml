@@ -31,7 +31,7 @@
             <div class="form-group visually-hidden">
                 <label asp-for="classId" class="control-label" hidden></label>
                 <input asp-for="classId" value="@ViewBag.classId" class="form-control" name="classId" hidden />
-                <span asp-validation-for="classId" class="text-danger"hidden></span>
+                <span asp-validation-for="classId" class="text-danger" hidden></span>
             </div>
             <div class="input-group mt-3">
                 <input type="submit" value=“Guardar” id="save" asp-route-id="@ViewBag.classId" asp-action="AddStudent" class="btn btn-primary me-3">
@@ -58,7 +58,6 @@
                 return [[this.value, $(this).text()]];
             });
         });
-
         $('.selectedId').click(function () {
             $('.selectedId option:selected').remove().appendTo('.studentId');
             opts = $('#optlist option').map(function () {
@@ -68,8 +67,6 @@
                 return [[this.value, $(this).text()]];
             });
         });
-
-
     });
 </script>
 @section Scripts {

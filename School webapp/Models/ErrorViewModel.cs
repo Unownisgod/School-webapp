@@ -1,9 +1,12 @@
-namespace School_webapp.Models
-{
-    public class ErrorViewModel
-    {
-        public string? RequestId { get; set; }
+using Microsoft.AspNetCore.Identity.UI.Services;
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+namespace IdentitySchoolWebap.Models
+{
+    public class CustomEmailSender : IEmailSender
+    {
+        public Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

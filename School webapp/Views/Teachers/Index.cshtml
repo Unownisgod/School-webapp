@@ -20,7 +20,7 @@
             </th>
             <th>
                 Age
-            </th>            
+            </th>
             <th>
                 Email
             </th>
@@ -34,34 +34,35 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.lastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.age)
-            </td>            
-            <td>
-                @Html.DisplayFor(modelItem => item.email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.address)
-            </td>
-            <td class="input-group">
-                <a class="btn btn-outline-primary me-3" asp-action="Edit" asp-route-id="@item.id">Edit</a>  
-                <form method="post">
-                    <button class="btn btn-outline-danger" type="submit" asp-action="Delete" asp-route-id="@item.id" onclick="return showAlert()">Delete</button>
-                </form> 
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.lastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.age)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.address)
+                </td>
+                <td class="input-group">
+                    <a class="btn btn-outline-primary me-3" asp-action="Edit" asp-route-id="@item.id">Edit</a>
+                    <form method="post">
+                        <button class="btn btn-outline-danger" type="submit" asp-action="Delete" asp-route-id="@item.id" onclick="return showAlert()">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <script>

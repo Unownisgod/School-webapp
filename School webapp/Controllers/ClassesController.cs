@@ -25,6 +25,7 @@ namespace School_webapp.Controllers
 
         }
         // GET: Classes/Students/5
+        [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> Students(int? id)
         {
             MyDbContext context = new MyDbContext();
@@ -51,6 +52,7 @@ namespace School_webapp.Controllers
         }
 
         // GET: Classes/AddStudents/5
+        [Authorize(Roles = "Admin, Teacher")]
         public IActionResult AddStudents(int? id)
         {
             using (var context = new MyDbContext())
@@ -65,6 +67,7 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> AddStudent(List<int> studentId, int classId)
         {
             if (ModelState.IsValid)
@@ -83,7 +86,7 @@ namespace School_webapp.Controllers
 
 
         // GET: Classes
-        [Authorize]
+        [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> Index()
         {
             using (var context = new MyDbContext())
@@ -97,6 +100,7 @@ namespace School_webapp.Controllers
         }
 
         // GET: Classes/Create
+        [Authorize(Roles = "Admin, Teacher")]
         public IActionResult Create()
         {
             using (var context = new MyDbContext())
@@ -111,6 +115,8 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Teacher")]
+
         public async Task<IActionResult> Create([Bind("Id,Name,teacherId,SubjectId")] Class @class)
         {
             if (ModelState.IsValid)
@@ -123,6 +129,8 @@ namespace School_webapp.Controllers
         }
 
         // GET: Classes/Edit/5
+        [Authorize(Roles = "Admin, Teacher")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             using (var context = new MyDbContext())
@@ -148,6 +156,8 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Teacher")]
+
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,teacherId,SubjectId")] Class @class)
         {
             if (id != @class.Id)
@@ -181,6 +191,8 @@ namespace School_webapp.Controllers
         // POST: Classes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Teacher")]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Class == null)
@@ -192,7 +204,7 @@ namespace School_webapp.Controllers
             {
                 _context.Class.Remove(@class);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -200,6 +212,8 @@ namespace School_webapp.Controllers
         // POST: Classes/Delete/5
         [HttpPost, ActionName("DeleteStudent")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Teacher")]
+
         public async Task<IActionResult> StudentDeleteConfirmed(int classId, int id)
         {
             //falta pasar el classId
@@ -219,7 +233,7 @@ namespace School_webapp.Controllers
 
         private bool ClassExists(int id)
         {
-          return (_context.Class?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Class?.Any(e => e.Id == id)).GetValueOrDefault();
         }
         private dynamic GetStudentList(MyDbContext context)
         {
@@ -373,11 +387,11 @@ namespace School_webapp.Controllers
             //stores it into a ViewBag for it to be accessible from the view
             return ViewBag.subjectList = res;
         }
-    private dynamic GetStudentInfo(MyDbContext context, int? id)
+        private dynamic GetStudentInfo(MyDbContext context, int? id)
         {
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             //counts table rows     
-            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = "+id+");";
+            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = " + id + ");";
             context.Database.OpenConnection();
             DbDataReader counter = command.ExecuteReader();
             //stores it into variaable 
@@ -385,7 +399,7 @@ namespace School_webapp.Controllers
             int count = counter.GetInt32(0);
             counter.Close();
             //gets relevant values from subject table
-            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = "+id+" ); ";
+            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT StudentClass.studentid FROM StudentClass WHERE StudentClass.classid = " + id + " ); ";
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
@@ -403,13 +417,13 @@ namespace School_webapp.Controllers
             //stores it into a ViewBag for it to be accessible from the view
             return ViewBag.StudentList = res;
         }
-    }        
     }
+}
 
-    internal class MyDbContext : DbContext
+internal class MyDbContext : DbContext
+{
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=School_webapp.Data;Trusted_Connection=True;MultipleActiveResultSets=true");
-        }
+        optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=School_webapp.Data;Trusted_Connection=True;MultipleActiveResultSets=true");
     }
+}

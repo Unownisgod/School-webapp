@@ -7,7 +7,7 @@
         public int subjectId { get; set; }
         public StudentSubject()
         {
-            
+
         }
     }
 }

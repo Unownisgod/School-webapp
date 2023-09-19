@@ -6,64 +6,64 @@
 
 <h1>Details</h1>
 
-    <h4>Student</h4>
-    <hr />
+<h4>Student</h4>
+<hr />
 <div class="row justify-content-center">
-<div class="col-md-8">
-    <div class="content ">
-    <table class="table">
-        <tr>
-            <th>
-                Name
-            </th>
-            <td>
-                @Html.DisplayFor(model => model.name)
-            </td>    
-            </tr>
-            <tr>
-            <th>
-                Last Name
-            </th>
-            <td>
-                @Html.DisplayFor(model => model.lastName)
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Age
-            </th>
-            <td>
-                @Html.DisplayFor(model => model.age)
-            </td>
-        </tr>
-        <tr>
-            <th>
-                School Year
-            </th>
-            <td>
-                @Html.DisplayFor(model => model.schoolYear)
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Section
-            </th>
-            <td>
-                @Html.DisplayFor(model => model.section)
-            </td>   
-            </tr>
-            <tr>
-            <th>
-                Address
-            </th>
-            <td>
-                @Html.DisplayFor(model => model.address)
-            </td>            
-            
-        </tr>
-    </table>
+    <div class="col-md-8">
+        <div class="content ">
+            <table class="table">
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.name)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Last Name
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.lastName)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Age
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.age)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        School Year
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.schoolYear)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Section
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.section)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Address
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.address)
+                    </td>
+
+                </tr>
+            </table>
+        </div>
     </div>
-</div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.id">Edit</a> |

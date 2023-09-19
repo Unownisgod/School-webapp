@@ -25,9 +25,9 @@
                     </select>
                 </div>
             </div>
-            <input name="tutorId" value="@ViewBag.id" hidden/>
+            <input name="tutorId" value="@ViewBag.id" hidden />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary mt-3" asp-action="addWards"/>
+                <input type="submit" value="Create" class="btn btn-primary mt-3" asp-action="addWards" />
                 <button type="reset" class="btn btn-primary" onclick="history.go(-1);">back</button>
             </div>
         </form>
@@ -35,5 +35,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

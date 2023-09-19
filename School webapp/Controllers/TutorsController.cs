@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,20 +22,26 @@ namespace School_webapp.Controllers
         }
 
         // GET: Tutors
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Index()
         {
-              return _context.Tutor != null ? 
-                          View(await _context.Tutor.ToListAsync()) :
-                          Problem("Entity set 'School_webappContext.Tutor'  is null.");
+            return _context.Tutor != null ?
+                        View(await _context.Tutor.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.Tutor'  is null.");
         }
 
         // GET: Tutors/Create
+        [Authorize(Roles = "Admin")]
+
         public IActionResult Create()
         {
             return View();
         }
-        
+
         // GET: Tutors/AddWards
+        [Authorize(Roles = "Admin")]
+
         public IActionResult AddWards(int? id)
         {
             getStudentList(id);
@@ -47,6 +54,8 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> AddWards(int studentId, int tutorId)
         {
             if (ModelState.IsValid)
@@ -65,6 +74,8 @@ namespace School_webapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Create([Bind("Id,name,lastName,phone,address")] Tutor tutor)
         {
             if (ModelState.IsValid)
@@ -77,6 +88,8 @@ namespace School_webapp.Controllers
         }
 
         // GET: Tutors/Edit/5
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Tutor == null)
@@ -90,8 +103,10 @@ namespace School_webapp.Controllers
                 return NotFound();
             }
             return View(tutor);
-        }        
+        }
         // GET: Tutors/Wards/5
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Wards(int? id)
         {
             ViewBag.tutorId = id;
@@ -107,6 +122,8 @@ namespace School_webapp.Controllers
         }
 
         // POST: Classes/Delete/5
+        [Authorize(Roles = "Admin")]
+
         [HttpPost, ActionName("DeleteWard")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> WardDeleteConfirmed(int tutorId, int id)
@@ -130,7 +147,7 @@ namespace School_webapp.Controllers
             var context = new MyDbContext();
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             //counts table rows     
-            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = "+id+");";
+            command.CommandText = "SELECT COUNT(DISTINCT student.id) FROM student WHERE student.id NOT IN (SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = " + id + ");";
             context.Database.OpenConnection();
             DbDataReader counter = command.ExecuteReader();
             //stores it into variaable 
@@ -138,7 +155,7 @@ namespace School_webapp.Controllers
             int count = counter.GetInt32(0);
             counter.Close();
             //gets relevant values from subject table
-            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = " + id+" );";
+            command.CommandText = "SELECT DISTINCT student.id, student.name, student.lastname FROM student WHERE student.id NOT IN(SELECT TutorStudent.studentid FROM TutorStudent WHERE TutorStudent.tutorId = " + id + " );";
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
@@ -206,14 +223,14 @@ namespace School_webapp.Controllers
             {
                 _context.Tutor.Remove(tutor);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TutorExists(int id)
         {
-          return (_context.Tutor?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Tutor?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

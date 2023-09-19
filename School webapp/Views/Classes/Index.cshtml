@@ -28,30 +28,33 @@
         </tr>
     </thead>
     <tbody>
-    @{int i = 0;}
-@foreach (var item in Model) {
+        @{
+            int i = 0;
+        }
+        @foreach (var item in Model)
+        {
             <tr>
                 <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
                     @ViewBag.teacherList[i][2], @ViewBag.teacherList[i][1]
                 </td>
-            <td>
+                <td>
                     @ViewBag.subjectList[i][1] @ViewBag.subjectList[i][2]
                 </td>
-            <td>
+                <td>
                     <a class="btn btn-primary" asp-action="Students" asp-route-id="@item.Id">Students</a>
-            </td>
-            <td class="input-group">
-                <a asp-action="Edit" class="btn btn-outline-primary me-2" asp-route-id="@item.Id">Edit</a>
+                </td>
+                <td class="input-group">
+                    <a asp-action="Edit" class="btn btn-outline-primary me-2" asp-route-id="@item.Id">Edit</a>
                     <form method="post">
                         <button class="btn btn-outline-danger" type="submit" asp-action="Delete" asp-route-id="@item.Id" onclick="return showAlert()">Delete</button>
                     </form>
                 </td>
-        </tr>
-        i++;
-}
+            </tr>
+            i++;
+        }
     </tbody>
 </table>
 <script>

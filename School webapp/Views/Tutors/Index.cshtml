@@ -20,7 +20,7 @@
             </th>
             <th>
                 Phone
-            </th>            
+            </th>
             <th>
                 Address
             </th>
@@ -31,31 +31,32 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.lastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.address)
-            </td>            
-            <td>
-                <a class="btn btn-primary" asp-action="Wards" asp-route-id="@item.Id">Wards</a>
-            </td>
-            <td class="input-group">
-                <a class="btn btn-outline-primary me-3" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.lastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.address)
+                </td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Wards" asp-route-id="@item.Id">Wards</a>
+                </td>
+                <td class="input-group">
+                    <a class="btn btn-outline-primary me-3" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     <form method="post">
                         <button class="btn btn-outline-danger" type="submit" asp-action="Delete" asp-route-id="@item.Id" onclick="return showAlert()">Delete</button>
                     </form>
                 </td>
-        </tr>
-}
+            </tr>
+        }
     </tbody>
 </table>
 <script>

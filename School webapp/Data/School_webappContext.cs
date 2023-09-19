@@ -14,7 +14,7 @@ namespace School_webapp.Data
         {
         }
 
-        public School_webappContext (DbContextOptions<School_webappContext> options)
+        public School_webappContext(DbContextOptions<School_webappContext> options)
             : base(options)
         {
         }
