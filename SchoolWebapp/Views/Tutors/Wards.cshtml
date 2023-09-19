@@ -1,0 +1,71 @@
+﻿@model IEnumerable<School_webapp.Models.Student>
+
+@{
+    ViewData["Title"] = "Wards";
+}
+
+<h1>Wards</h1>
+
+<p>
+    <a asp-action="AddWards" asp-route-id="@ViewBag.id">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Last Name
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                School Year
+            </th>
+            <th>
+                Section
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.lastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.age)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.schoolYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.section)
+            </td>
+            <td>
+                <div class="input-group">
+                    <a asp-controller="Students" asp-action="Details" asp-route-id="@item.id" class="btn btn-outline-primary me-3">Details</a> 
+                    <form method="post">
+                        <input name="TutorId" value="@ViewBag.tutorId" hidden>
+                        <button type="submit" class="btn-outline-danger btn" asp-controller="Tutors" asp-action="DeleteWard" asp-route-id="@item.id " onclick="return showAlert()">Delete</button>
+                    </form>            
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<script>
+    function showAlert() {
+        var respuesta = confirm("Are you sure? You will delete it permanently");
+        if (!respuesta) {
+            event.preventDefault();
+        }
+    }
+</script>

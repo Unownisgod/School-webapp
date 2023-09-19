@@ -1,0 +1,82 @@
+﻿@model School_webapp.Models.ActivityViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    @using (Html.BeginForm("Create", "Controlador", FormMethod.Post))
+
+}
+
+<h1>Create</h1>
+
+<h4>Activity</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Activity.classId" class="control-label">Class</label>
+                <div class="input-group">
+                    <select asp-for="Activity.classId" class="form-control">
+                        @{
+                            foreach (var row in ViewBag.classes)
+                            {
+                                @Html.Raw("<option value='" + row[0] + "'>"+row[1]+ "</option>")
+                            }
+                        }
+                    </select>
+                    <span class="input-group-btn">
+                        <a asp-controller="Classes" asp-action="create" class="btn btn-primary" type="button">+</a>
+                    </span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Activity.deadline ,new {@class = "control-label"})
+                    @Html.EditorFor(model => model.Activity.deadline, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Activity.deadline, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Activity.Title, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Activity.Title, new { htmlAttributes = new { @class = "form-control" , @maxlength = "100" } })
+                    @Html.ValidationMessageFor(model => model.Activity.Title, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Activity.Description, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Activity.Description, new { htmlAttributes = new { @class = "form-control"} })
+                    @Html.ValidationMessageFor(model => model.Activity.Description, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group" hidden>
+                    <label asp-for="ActivityStudent.isSubmitted" class="control-label" ></label>
+                    <input type="checkbox" value="false" asp-for="ActivityStudent.isSubmitted" class="form-control" />
+                    <span asp-validation-for="ActivityStudent.isSubmitted" class="text-danger"></span>
+                </div>
+                <div class="form-group" hidden>
+                    <label asp-for="ActivityStudent.isRated" class="control-label" ></label>
+                    <input type="checkbox" value="false" asp-for="ActivityStudent.isRated" class="form-control" />
+                    <span asp-validation-for="ActivityStudent.isRated" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ActivityStudent.canBeSubmittedLate, new { @class = "control-label" })
+                    @Html.EditorFor(model => model.ActivityStudent.canBeSubmittedLate)
+                    @Html.ValidationMessageFor(model => model.ActivityStudent.canBeSubmittedLate, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-check-input" hidden>
+                    <input type="checkbox" value="false" asp-for="ActivityStudent.isLate" class="form-control" />
+                    <label asp-for="ActivityStudent.isLate" class="control-label" ></label>
+                    <span asp-validation-for="ActivityStudent.isLate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
