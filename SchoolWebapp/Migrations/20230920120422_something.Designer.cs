@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using School_webapp.Data;
 
@@ -11,9 +12,10 @@ using School_webapp.Data;
 namespace IdentitySchoolWebap.Migrations
 {
     [DbContext(typeof(School_webappContext))]
-    partial class School_webappContextModelSnapshot : ModelSnapshot
+    [Migration("20230920120422_something")]
+    partial class something
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

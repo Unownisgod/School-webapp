@@ -14,31 +14,31 @@ namespace School_webapp.Data
         {
         }
 
-        public DbSet<School_webapp.Models.Student> Student { get; set; } = default!;
+        public DbSet<Models.Student> Student { get; set; } = default!;
 
-        public DbSet<School_webapp.Models.Subject>? Subject { get; set; }
+        public DbSet<Models.Subject>? Subject { get; set; }
 
-        public DbSet<School_webapp.Models.Teacher>? Teacher { get; set; }
+        public DbSet<Models.Teacher>? Teacher { get; set; }
 
-        public DbSet<School_webapp.Models.StudentSubject>? StudentSubject { get; set; }
+        public DbSet<Models.StudentSubject>? StudentSubject { get; set; }
 
-        public DbSet<School_webapp.Models.TeacherStudent>? TeacherStudent { get; set; }
+        public DbSet<Models.TeacherStudent>? TeacherStudent { get; set; }
 
-        public DbSet<School_webapp.Models.TeacherSubject>? TeacherSubject { get; set; }
+        public DbSet<Models.TeacherSubject>? TeacherSubject { get; set; }
 
-        public DbSet<School_webapp.Models.StudentActivity>? StudentActivity { get; set; }
+        public DbSet<Models.StudentActivity>? StudentActivity { get; set; }
 
-        public DbSet<School_webapp.Models.Activity>? Activity { get; set; }
+        public DbSet<Models.Activity>? Activity { get; set; }
 
-        public DbSet<School_webapp.Models.Class>? Class { get; set; }
+        public DbSet<Models.Class>? Class { get; set; }
 
-        public DbSet<School_webapp.Models.StudentClass>? StudentClass { get; set; }
+        public DbSet<Models.StudentClass>? StudentClass { get; set; }
 
-        public DbSet<School_webapp.Models.Tutor>? Tutor { get; set; }
+        public DbSet<Models.Tutor>? Tutor { get; set; }
 
-        public DbSet<School_webapp.Models.TutorStudent>? TutorStudent { get; set; }
+        public DbSet<Models.TutorStudent>? TutorStudent { get; set; }
 
-        public DbSet<School_webapp.Models.ActivityStudent>? ActivityStudent { get; set; }
+        public DbSet<Models.ActivityStudent>? ActivityStudent { get; set; }
 
         public DbSet<SchoolWebapp.Models.Event>? Event { get; set; }
     }

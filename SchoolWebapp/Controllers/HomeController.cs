@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using School_webapp.Data;
 using School_webapp.Models;
-using Event = SchoolWebapp.Models.Event;
 
 namespace School_webapp.Controllers
 {
@@ -10,14 +9,17 @@ namespace School_webapp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly School_webappContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, School_webappContext context)
+        public HomeController(ILogger<HomeController> logger, School_webappContext context, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _context = context;
-        }
-        [Authorize(Roles = "Student, Admin, Teacher")]
+            _userManager = userManager;
 
+        }
+        /*        [Authorize(Roles = "Student, Admin, Teacher")]
+        */
         public IActionResult Index()
         {
             return View();
@@ -41,11 +43,10 @@ namespace School_webapp.Controllers
             var title = Request.Form["title"];
             DateTime start = DateTime.Parse(Request.Form["start"]);
             //insert into a class
-            var newEvent = new Event
-            {
-                Title = title,
-                Start = start
-            };
+            var newEvent = new SchoolWebapp.Models.Event { };
+            newEvent.Title = title;
+            newEvent.DateStart = start;
+            newEvent.UserId = _userManager.GetUserId(User);
             //insert into the database
             _context.Event.Add(newEvent);
             _context.SaveChanges();
