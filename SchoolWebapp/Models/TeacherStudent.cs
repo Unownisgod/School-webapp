@@ -7,7 +7,7 @@
         public int teacherId { get; set; }
         public TeacherStudent()
         {
-            
+
         }
     }
 }

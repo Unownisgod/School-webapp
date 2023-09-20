@@ -7,7 +7,7 @@
         public int classId { get; set; }
         public StudentClass()
         {
-            
+
         }
     }
 }

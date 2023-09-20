@@ -26,9 +26,9 @@ namespace School_webapp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-              return _context.Teacher != null ? 
-                          View(await _context.Teacher.ToListAsync()) :
-                          Problem("Entity set 'School_webappContext.Teacher'  is null.");
+            return _context.Teacher != null ?
+                        View(await _context.Teacher.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.Teacher'  is null.");
         }
 
         // GET: Teachers/Create
@@ -54,7 +54,7 @@ namespace School_webapp.Controllers
                 await _context.SaveChangesAsync();
                 var user = new User()
                 {
-                    Id = teacher.id.ToString()+ "-T",
+                    Id = teacher.id.ToString() + "-T",
                     UserName = teacher.name.Substring(0, 1) + teacher.lastName.Substring(0, Math.Min(teacher.lastName.Length, 3)).Normalize() + teacher.id,
                     Email = "",
                     EmailConfirmed = false,
@@ -171,14 +171,14 @@ namespace School_webapp.Controllers
             {
                 _context.Teacher.Remove(teacher);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TeacherExists(int id)
         {
-          return (_context.Teacher?.Any(e => e.id == id)).GetValueOrDefault();
+            return (_context.Teacher?.Any(e => e.id == id)).GetValueOrDefault();
         }
     }
 }

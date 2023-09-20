@@ -1,8 +1,73 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<style>
+    .fc-header-title {
+        color: #000000;
+        text-shadow: none;
+    }
+</style>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // Configuración del calendario
+        });
+
+        calendar.render();
+
+        $('#calendar').on('click', function () {
+            $('#dialog').dialog('open');
+        });
+
+        $('#dialog').dialog({
+            autoOpen: false,
+            // Otras opciones de configuración del cuadro de diálogo
+        });
+    });
+
+
+</script>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+</button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-tittle">Add Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-controller="Home" asp-action="AddEvent" method="post">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label for="start">Start</label>
+                        <input type="date" class="form-control" id="start" name="start">
+                    </div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
+
+    <div id='calendar'></div>
+
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>

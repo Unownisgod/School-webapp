@@ -16,8 +16,8 @@ namespace School_webapp.Controllers
 
         public StudentsController(School_webappContext context, Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userManager)
         {
-        _context = context;
-        _userManager = userManager;
+            _context = context;
+            _userManager = userManager;
         }
 
         // GET: Students
@@ -70,7 +70,7 @@ namespace School_webapp.Controllers
         public async Task<IActionResult> Create([Bind("id,name,lastName,address,age,schoolYear,section")] Student student)
         {
 
-            
+
             if (ModelState.IsValid)
             {
                 _context.Add(student);
@@ -78,8 +78,8 @@ namespace School_webapp.Controllers
 
                 var user = new User()
                 {
-                    Id = student.id.ToString()+"-U",
-                    UserName = student.name.Substring(0,1)+student.lastName.Substring(0,Math.Min(student.lastName.Length,3))+student.id,
+                    Id = student.id.ToString() + "-U",
+                    UserName = student.name.Substring(0, 1) + student.lastName.Substring(0, Math.Min(student.lastName.Length, 3)) + student.id,
                     Email = "",
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
@@ -87,7 +87,7 @@ namespace School_webapp.Controllers
                     LockoutEnabled = false,
                     AccessFailedCount = 0,
                 };
-                var result = await _userManager.CreateAsync(user, user.UserName+"-Password");
+                var result = await _userManager.CreateAsync(user, user.UserName + "-Password");
                 await _userManager.AddToRoleAsync(user, "Student");
                 return RedirectToAction(nameof(Index));
             }
@@ -164,11 +164,11 @@ namespace School_webapp.Controllers
             {
                 _context.Student.Remove(student);
             }
-            
+
             await _context.SaveChangesAsync();
 
             //delete user
-            var user = await _userManager.FindByIdAsync(id.ToString()+"-U");
+            var user = await _userManager.FindByIdAsync(id.ToString() + "-U");
             if (user != null)
             {
                 await _userManager.DeleteAsync(user);
@@ -178,7 +178,7 @@ namespace School_webapp.Controllers
 
         private bool StudentExists(int id)
         {
-          return (_context.Student?.Any(e => e.id == id)).GetValueOrDefault();
+            return (_context.Student?.Any(e => e.id == id)).GetValueOrDefault();
         }
     }
 }

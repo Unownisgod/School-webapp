@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using School_webapp.Models;
 
 namespace School_webapp.Data
 {
@@ -14,7 +9,7 @@ namespace School_webapp.Data
         {
         }
 
-        public School_webappContext (DbContextOptions<School_webappContext> options)
+        public School_webappContext(DbContextOptions<School_webappContext> options)
             : base(options)
         {
         }
@@ -44,5 +39,7 @@ namespace School_webapp.Data
         public DbSet<School_webapp.Models.TutorStudent>? TutorStudent { get; set; }
 
         public DbSet<School_webapp.Models.ActivityStudent>? ActivityStudent { get; set; }
+
+        public DbSet<SchoolWebapp.Models.Event>? Event { get; set; }
     }
 }

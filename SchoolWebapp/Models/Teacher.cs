@@ -11,7 +11,7 @@
         public string address { get; set; }
         public Teacher()
         {
-            
+
         }
 
     }

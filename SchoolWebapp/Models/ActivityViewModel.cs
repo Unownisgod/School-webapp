@@ -6,7 +6,7 @@
         public ActivityStudent ActivityStudent { get; set; }
         public ActivityViewModel()
         {
-            
+
         }
 
         public ActivityViewModel(Activity act, ActivityStudent actst)
