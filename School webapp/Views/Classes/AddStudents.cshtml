@@ -1,0 +1,76 @@
+﻿@model School_webapp.Models.StudentClass
+
+@{
+    ViewData["Title"] = "AddStudent";
+}
+
+<h1>AddStudent</h1>
+
+<h4>Student</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="AddStudent" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="studentId" class="control-label">Full Name</label>
+                <br />
+                <div class="d-flex align-items-center">
+                    <select id="optlist" name="" class="studentId me-1" style="width: 40%;" size="20" multiple>
+                        <option selected hidden value="0" class="justify-content-center">--Select one Option--</option>
+                        @foreach (var item in ViewBag.studentList)
+                        {
+                            <option value="@item[0]">@item[2], @item[1]</option>
+                        }
+                    </select>
+                    <p class="fw-bold">➔</p>
+                    <select class="selectedId ms-1" style="width: 40%;" name="studentId" id="optlist1" onemptied="document.getElementById('save').disabled = true" size="20" multiple />
+                    <span asp-validation-for="studentId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group visually-hidden">
+                <label asp-for="classId" class="control-label" hidden></label>
+                <input asp-for="classId" value="@ViewBag.classId" class="form-control" name="classId" hidden />
+                <span asp-validation-for="classId" class="text-danger" hidden></span>
+            </div>
+            <div class="input-group mt-3">
+                <input type="submit" value=“Guardar” id="save" asp-route-id="@ViewBag.classId" asp-action="AddStudent" class="btn btn-primary me-3">
+                <button type="reset" class="btn btn-primary" onclick="history.go(-1);">back</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    $(function () {
+        opts = $('#optlist option').map(function () {
+            return [[this.value, $(this).text()]];
+        });
+        opts1 = $('#optlist1 option').map(function () {
+            return [[this.value, $(this).text()]];
+        });
+        $('.studentId').click(function () {
+            $('.studentId option:selected').remove().appendTo('.selectedId');
+            opts = $('#optlist option').map(function () {
+                return [[this.value, $(this).text()]];
+            });
+            opts1 = $('#optlist1 option').map(function () {
+                return [[this.value, $(this).text()]];
+            });
+        });
+        $('.selectedId').click(function () {
+            $('.selectedId option:selected').remove().appendTo('.studentId');
+            opts = $('#optlist option').map(function () {
+                return [[this.value, $(this).text()]];
+            });
+            opts1 = $('#optlist1 option').map(function () {
+                return [[this.value, $(this).text()]];
+            });
+        });
+    });
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
