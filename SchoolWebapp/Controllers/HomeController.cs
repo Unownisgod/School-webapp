@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using School_webapp.Data;
 using School_webapp.Models;
+using SchoolWebapp.Models;
+using System.Text.Json;
 
 namespace School_webapp.Controllers
 {
@@ -22,6 +24,13 @@ namespace School_webapp.Controllers
         */
         public IActionResult Index()
         {
+            var userId = _userManager.GetUserId(User);
+            var events = _context.Event.Where(e => e.UserId == userId).ToList();
+            
+            //serialize the events into a json string
+            var jsonEvents = JsonSerializer.Serialize(events);
+            //viewbag
+                ViewBag.Events = jsonEvents;
             return View();
         }
 

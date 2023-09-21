@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Text.Json;
+@using SchoolWebapp.Models;
+@{
     ViewData["Title"] = "Home Page";
 }
 <style>
@@ -10,24 +12,21 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
 <script>
-
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            // Configuración del calendario
+            events: [
+                { 
+                    @{
+                        var elemento = JsonSerializer.Deserialize<List<Event>>(ViewBag.Events);
+                    }
+                }
+            ]
         });
 
         calendar.render();
 
-        $('#calendar').on('click', function () {
-            $('#dialog').dialog('open');
-        });
-
-        $('#dialog').dialog({
-            autoOpen: false,
-            // Otras opciones de configuración del cuadro de diálogo
-        });
     });
 
 
