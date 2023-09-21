@@ -28,9 +28,15 @@ namespace School_webapp.Controllers
             var events = _context.Event.Where(e => e.UserId == userId).ToList();
             
             //serialize the events into a json string
-            var jsonEvents = JsonSerializer.Serialize(events);
+            var ModifiecEvents = events.Select(e => new
+            {
+                title = e.Title,
+                start = e.Start
+            }).ToList();
+            var jsonEvents = JsonSerializer.Serialize(ModifiecEvents);
+
             //viewbag
-                ViewBag.Events = jsonEvents;
+            ViewBag.Events = jsonEvents;
             return View();
         }
 
@@ -54,7 +60,7 @@ namespace School_webapp.Controllers
             //insert into a class
             var newEvent = new SchoolWebapp.Models.Event { };
             newEvent.Title = title;
-            newEvent.DateStart = start;
+            newEvent.Start = start;
             newEvent.UserId = _userManager.GetUserId(User);
             //insert into the database
             _context.Event.Add(newEvent);
