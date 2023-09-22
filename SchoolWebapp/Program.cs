@@ -34,6 +34,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddTransient<IEmailSender, CustomEmailSender>();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+});
 
 
 
@@ -63,14 +67,15 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
+        name: "identity",
+        pattern: "Identity/{controller=Account}/{action=}/{id?}");
+
+    endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     endpoints.MapRazorPages();
 
-    endpoints.MapControllerRoute(
-        name: "identity",
-        pattern: "Identity/{controller=Account}/{action=}/{id?}");
 });
 using var scope = app.Services.CreateScope();
 {

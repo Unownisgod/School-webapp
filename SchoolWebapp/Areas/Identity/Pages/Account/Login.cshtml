@@ -17,19 +17,43 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
     <link rel="stylesheet" href="~/test.styles.css" asp-append-version="true">
     <style>
-        body {
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        @{
-            var random = new Random(); var randomNumber = random.Next(1, 4); string image; switch (randomNumber) { case 1: image = "https://img.freepik.com/free-photo/laptop-notebook-writing-from-view-wooden-background_482257-35213.jpg?w=1380&t=st=1694680775~exp=1694681375~hmac=b856e3bcce9c9e3d1058b701e646f1165828bbb61593b97de103ebb3a814eea4"; break; case 2: image = "https://img.freepik.com/free-photo/chalk-board-notepads-colored-background_23-2148194616.jpg?w=1380&t=st=1694681549~exp=1694682149~hmac=4864bd1809255b342093d595e5293b876ca932442132bd4716fac8cc4ef838a7"; break; case 3: image = "https://img.freepik.com/free-photo/workplace-arrangement-purple-background-with-copy-space_23-2148404536.jpg?w=1380&t=st=1694681702~exp=1694682302~hmac=5707a640baee04f990ba27b8ce47acfa71f89e453bb71cb7d64e0e92fc840d94"; break; case 4: image = "https://img.freepik.com/free-photo/view-arrangement-with-keyboard-notebooks_23-2148847749.jpg?w=1380&t=st=1694681731~exp=1694682331~hmac=89a313c331b0753e4bac0fe36ce777736167cd9f17593fbbfedb675549c6e0f8"; break; default: image = ""; break; }
-        } background-image: url(@image);
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
+body {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+@{
+    var random = new Random();
+    var randomNumber = random.Next(1, 5);
+    string image;
+    switch (randomNumber) {
+        case 1:
+            image = "/resources/images/loginBg1.jpg";
+            break;
+        case 2:
+            image = "/resources/images/loginBg2.jpg";
+            break;
+        case 3:
+            image = "/resources/images/loginBg3.jpg";
+            break;
+        case 4:
+            image = "/resources/images/loginBg4.jpg";
+            break;
+        default:
+            image = string.Empty;
+            break;
+    }
+}
+
+body {
+    background-image: url(@image);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
     </style>
 </head>
 <div class="d-flex justify-content-center align-content-center" style="align-content: center;

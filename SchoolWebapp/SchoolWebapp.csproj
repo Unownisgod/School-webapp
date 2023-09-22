@@ -24,4 +24,8 @@
     <Folder Include="Areas\Identity\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Resources\Images\logo.png" />
+  </ItemGroup>
+
 </Project>
