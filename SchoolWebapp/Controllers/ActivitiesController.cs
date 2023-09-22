@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
+using SchoolWebapp.Models;
 using System.Data.Common;
 
 namespace School_webapp.Controllers
@@ -131,7 +132,8 @@ namespace School_webapp.Controllers
             context.Database.OpenConnection();
             DbDataReader result = command.ExecuteReader();
             //creates an array to store data in
-            List<ActivityStudent> res = new List<ActivityStudent>();
+            List<ActivityStudent> activityStudentList = new List<ActivityStudent>();
+            List<Event> eventList = new List<Event>();
             //reads the data an stores it into the array
             if (ModelState.IsValid)
             {
@@ -139,7 +141,7 @@ namespace School_webapp.Controllers
                 await _context.SaveChangesAsync();
                 while (result.Read())
                 {
-                    res.Add(new ActivityStudent
+                    activityStudentList.Add(new ActivityStudent
                     {
                         activityId = activityViewModel.Activity.activityId,
                         studentId = result.GetInt32(0),
@@ -151,8 +153,19 @@ namespace School_webapp.Controllers
                         commentary = activityViewModel.ActivityStudent.commentary,
                         submitDate = activityViewModel.ActivityStudent.submitDate,
                     });
+                    eventList.Add(new Event
+                    {
+                        UserId = result.GetInt32(0).ToString() + "-U",
+                        Title = activityViewModel.Activity.Title,
+                        Start = activityViewModel.Activity.deadline,
+                        AllDay = false,
+                        Color = "#FF0000",
+                        TextColor = "#FFFFFF",
+                        ClassName = "event-important"
+                    });
                 }
-                _context.AddRange(res);
+                _context.AddRange(activityStudentList);
+                _context.AddRange(eventList);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

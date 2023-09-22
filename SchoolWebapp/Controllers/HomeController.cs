@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using School_webapp.Data;
 using School_webapp.Models;
 using SchoolWebapp.Models;
+using System.Runtime.Versioning;
 using System.Text.Json;
 
 namespace School_webapp.Controllers
@@ -20,8 +22,7 @@ namespace School_webapp.Controllers
             _userManager = userManager;
 
         }
-        /*        [Authorize(Roles = "Student, Admin, Teacher")]
-        */
+        [Authorize(Roles = "Student, Admin, Teacher")]
         public IActionResult Index()
         {
             var userId = _userManager.GetUserId(User);
@@ -65,7 +66,7 @@ namespace School_webapp.Controllers
             //insert into the database
             _context.Event.Add(newEvent);
             _context.SaveChanges();
-            return View();
+            return RedirectToAction("Index");
         }
     }
 }
