@@ -7,6 +7,10 @@
         public int teacherId { get; set; }
         public int SubjectId { get; set; }
         public Class() { }
+        public Class(string name, int id) {
+            Name=name;
+            Id=id;
+        }
 
     }
 }

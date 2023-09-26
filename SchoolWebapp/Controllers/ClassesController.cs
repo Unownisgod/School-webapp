@@ -31,7 +31,7 @@ namespace School_webapp.Controllers
             var students = await _context.Student
                     .Join(_context.StudentClass,
                           s => s.id, // clave externa de Student
-                          c => c.studentId, // clave primaria de StudentClass
+                          c => int.Parse(c.studentId), // clave primaria de StudentClass
                           (s, c) => new { s, c }) // resultado del join
                     .Where(sc => sc.c.classId == id) // filtro por ClassId
                     .Select(sc => sc.s) // selección de los objetos Student
@@ -67,7 +67,7 @@ namespace School_webapp.Controllers
             {
                 foreach (var id in studentId)
                 {
-                    var studentClass = new StudentClass { studentId = id, classId = classId };
+                    var studentClass = new StudentClass { studentId = id.ToString(), classId = classId };
                     _context.Add(studentClass);
                 }
                 await _context.SaveChangesAsync();
@@ -214,7 +214,7 @@ namespace School_webapp.Controllers
             {
                 return Problem("Entity set 'School_webappContext.StudentClass'  is null.");
             }
-            var student = await _context.StudentClass.FirstOrDefaultAsync(sc => sc.studentId == id && sc.classId == classId);
+            var student = await _context.StudentClass.FirstOrDefaultAsync(sc => int.Parse(sc.studentId) == id && sc.classId == classId);
             if (@student != null)
             {
                 _context.StudentClass.Remove(@student);

@@ -3,17 +3,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-        font-size: 14px;
-    }
 
-    #calendar {
-        max-width: 1100px;
-</style>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
 <script>
@@ -33,40 +23,52 @@
         });
 </script>
 
-<div class="modal fade" id="EventModal" tabindex="-1" aria-labelledby="EventModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-tittle">Add Event</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form asp-controller="Home" asp-action="AddEvent" method="post">
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" class="form-control" id="title" name="title">
-                    </div>
-                    <div class="form-group">
-                        <label for="start">Start</label>
-                        <input type="datetime-local" class="form-control mb-3" id="start" name="start">
-                    </div>
-                    <div class="float-end">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
+<div class="row">
+
+    <div class="col-2 p-5 border-end">
+        <partial name="VerticalNavBar"/>
     </div>
+    <div class="col-10">
+        <div class="text-center">
+
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EventModal">
+                Add event
+            </button>
+            <div id='calendar'></div>
+
+
+        </div>
+
+    </div>
+            <div class="modal fade" id="EventModal" tabindex="-1" aria-labelledby="EventModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-tittle">Add Event</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form asp-controller="Home" asp-action="AddEvent" method="post">
+                                <div class="form-group">
+                                    <label for="title">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title">
+                                </div>
+                                <div class="form-group">
+                                    <label for="start">Start</label>
+                                    <input type="datetime-local" class="form-control mb-3" id="start" name="start">
+                                </div>
+                                <div class="float-end">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 </div>
 
 
-<div class="text-center">
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EventModal">
-    Add event
-</button>
-    <div id='calendar'></div>
-</div>
