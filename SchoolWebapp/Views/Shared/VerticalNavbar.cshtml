@@ -39,7 +39,7 @@
             <li class="fw-bold">Classes</li>
             @foreach (var item in data.GetClassesWithStudent(UserManager.GetUserId(User).Split("")[0]))
             {
-                <li><a class="nav-link text-dark" asp-controller="Classes" asp-action="Class" asp-route-itemid="@item.Id" title="">@item.Name</a></li>                
+                <li><a class="nav-link text-dark" asp-controller="Classes" asp-action="activityIndex" asp-route-itemid="@item.Id" title="">@item.Name</a></li>                
             }
         }
     }

@@ -11,8 +11,15 @@
     CultureInfo culture = new CultureInfo("en-EU");
 }
 
-<a asp-action="createActivity">Create new</a>
-<hr />
+@{
+    if (!User.IsInRole("Student"))
+    {
+        <p>
+            <a asp-action="createActivity">Create New</a>
+            <hr />
+        </p>
+    }
+}
 <div class="row justify-content-center">
     <div class="col-12">
         @foreach (var item in Model)

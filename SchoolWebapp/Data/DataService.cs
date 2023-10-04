@@ -17,7 +17,7 @@ namespace SchoolWebapp.Data
             studentId = studentId.Split("-")[0];
             var resultado = from c in _context.Class
                             join t in _context.StudentClass on c.Id equals t.classId
-                            where t.studentId.Equals(studentId)
+                            where t.studentId == Convert.ToInt32(studentId)
                             select new { c.Name, c.Id };
             List<Class> classes= new List<Class>();
 
