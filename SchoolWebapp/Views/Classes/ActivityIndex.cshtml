@@ -11,7 +11,7 @@
     CultureInfo culture = new CultureInfo("en-EU");
 }
 
-<a asp-action="create">Create new</a>
+<a asp-action="createActivity">Create new</a>
 <hr />
 <div class="row justify-content-center">
     <div class="col-12">
@@ -24,7 +24,7 @@
             }
             <div class="d-inline">
                 <div class="float-start w-75">
-                    <span class=""><a asp-action="students" asp-route-id="@item.activityId">@Html.DisplayFor(modelItem => item.Title)</a></span>
+                    <span class=""><a asp-action="Activity" asp-route-id="@item.activityId">@Html.DisplayFor(modelItem => item.Title)</a></span>
                     <br>
                     <p class="" style="color:gray; font-size:12px;">@desc</p>
                 </div>
@@ -32,12 +32,19 @@
                     <span class="badge @(DateTime.Today > item.deadline ? "bg-danger" : item.deadline.Subtract(DateTime.Today).Days <= 7? "bg-warning" : "bg-success") rounded">Deadline: @item.deadline.Date.ToString("D", culture)</span>
                     <div class="dropdown float-end">
                         <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" asp-action="edit" asp-route-id="@item.activityId">Edit</a></li>
-                            <li><form method="post"><button class="dropdown-item" asp-action="delete" asp-route-id="@item.activityId" onclick="showAlert()">Delete</button></form></li>
-                            <li><a class="dropdown-item" asp-action="publish" asp-route-id="@item.activityId">Publish</a></li>
-                            <li><a class="dropdown-item" asp-action="unpublish" asp-route-id="@item.activityId">Unpublish</a></li>
-                        </ul>
+                        <!--if user is not teacher or admin-->
+                        @{
+                            if (User.IsInRole("Student"))
+                            {
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" asp-action="Activityedit" asp-route-id="@item.activityId">Edit</a></li>
+                                    <li><form method="post"><button class="dropdown-item" asp-action="delete" asp-route-id="@item.activityId" onclick="showAlert()">Delete</button></form></li>
+                                    <li><a class="dropdown-item" asp-action="Activitypublish" asp-route-id="@item.activityId">Publish</a></li>
+                                    <li><a class="dropdown-item" asp-action="Activityunpublish" asp-route-id="@item.activityId">Unpublish</a></li>
+                                </ul>
+                            }
+                        }
+                        
                     </div>
                 </div>
             </div>

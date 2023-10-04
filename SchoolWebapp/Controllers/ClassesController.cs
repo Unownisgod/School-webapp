@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_webapp.Data;
 using School_webapp.Models;
+using SchoolWebapp.Models;
 using System.Data;
 using System.Data.Common;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace School_webapp.Controllers
 {
@@ -17,8 +20,361 @@ namespace School_webapp.Controllers
             _context = context;
 
         }
-        // GET: Classes/Students/5
+        // GET: Activities
+        [Authorize]
+        public async Task<IActionResult> ActivityIndex()
+        {
+            return _context.Activity != null ?
+                        View(await _context.Activity.ToListAsync()) :
+                        Problem("Entity set 'School_webappContext.Activity'  is null.");
+        }
+
         [Authorize(Roles = "Admin, Teacher")]
+        // GET: Activities/Create
+        public IActionResult CreateActivity()
+        {
+            getClassList();
+            return View();
+        }
+        [Authorize]
+        public IActionResult Activity(int? id, int activityId)
+        {
+            //if teacher or admin
+            if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+            {
+                //select the students from the database
+                var context = new MyDbContext();
+                DbCommand command = context.Database.GetDbConnection().CreateCommand();
+                //gets the class
+                command.CommandText = "SELECT classId FROM class join Activity on class.id = activity.classid where activity.activityid = " + id;
+                context.Database.OpenConnection();
+                DbDataReader classId = command.ExecuteReader();
+                classId.Read();
+                int classid = classId.GetInt32(0);
+                classId.Close();
+                //counts table rows
+                command.CommandText = "SELECT count(*) FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = " + classid;
+                context.Database.OpenConnection();
+                DbDataReader counter = command.ExecuteReader();
+                //stores it into variaable
+                counter.Read();
+                int count = counter.GetInt32(0);
+                counter.Close();
+                //gets relevant values from subject table
+                command.CommandText = "SELECT ActivityStudent.isSubmitted, student.name, student.lastName, activitystudent.activitystudentid FROM student JOIN studentClass ON student.id = studentclass.studentId JOIN Activity ON Activity.classId = StudentClass.classId JOIN ActivityStudent ON activity.activityid = ActivityStudent.activityId and student.id = ActivityStudent.studentId where studentClass.classid = " + classid + " and activity.activityId = " + id + " order by 1 desc";
+                context.Database.OpenConnection();
+                DbDataReader result = command.ExecuteReader();
+                //creates an array to store data in
+                string[][] res = new string[count][];
+                //reads the data an stores it into the array
+                int i = 0;
+                while (result.Read())
+                {
+                    res[i] = new string[4];
+                    res[i][0] = result.GetBoolean(0).ToString();
+                    res[i][1] = result.GetString(1);
+                    res[i][2] = result.GetString(2);
+                    res[i][3] = result.GetInt32(3).ToString();
+                    i++;
+                }
+                //stores it into a ViewBag for it to be accessible from the view
+                ViewBag.students = res;
+
+                var userid = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-U")[0];
+                var activity = _context.Activity.Find(id);
+                var activityStudent = _context.ActivityStudent.FirstOrDefault(a => a.activityId == id && a.studentId.ToString() == userid);
+                var viewModel = new ActivityViewModel
+                {
+                    Activity = activity,
+                    ActivityStudent = activityStudent
+                };
+                return View(viewModel);
+            }
+            else
+            {
+                //select the students from the database
+                var context = new MyDbContext();
+                DbCommand command = context.Database.GetDbConnection().CreateCommand();
+                var userid = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-U")[0];
+                //gets the info from the activity and activitystudent tables
+                command.CommandText = "SELECT * FROM Activity join ActivityStudent on activity.activityid = activitystudent.activityid where activity.activityid = " + id + " and activitystudent.studentid = " + userid;
+                context.Database.OpenConnection();
+                DbDataReader data = command.ExecuteReader();
+                data.Read();
+
+                //get data into classes
+                var activity = new Activity
+                {
+                    activityId = data.GetInt32(0),
+                    classId = data.GetInt32(1),
+                    Title = data.GetString(2),
+                    Description = data.GetString(3),
+                    deadline = data.GetDateTime(4),
+                };
+                var activityStudent = new ActivityStudent
+                {
+                    activityStudentId = data.GetInt32(5),
+                    studentId = data.GetInt32(6),
+                    activityId = data.GetInt32(7),
+                    calification = data.GetFloat(8),
+                    isSubmitted = data.GetBoolean(9),
+                    isRated = data.GetBoolean(10),
+                    canBeSubmittedLate = data.GetBoolean(11),
+                    isLate = data.GetBoolean(12),
+                    commentary = data.IsDBNull(13) ? null : data.GetString(13),
+                    submitDate = data.IsDBNull(14) ? null : data.GetDateTime(13),
+                };
+                //stores it into activityviewmodel
+                var viewModel = new ActivityViewModel
+                {
+                    Activity = activity,
+                    ActivityStudent = activityStudent
+                };
+                data.Close();
+                return View(viewModel);
+            }
+        }
+
+        private dynamic getClassList()
+        {
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM class";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT id, name FROM class";
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            string[][] res = new string[count][];
+            //reads the data an stores it into the array
+            int i = 0;
+            while (result.Read())
+            {
+                res[i] = new string[2];
+                res[i][0] = result.GetInt32(0).ToString();
+                res[i][1] = result.GetString(1);
+                i++;
+            }
+            //stores it into a ViewBag for it to be accessible from the view
+            return ViewBag.classes = res;
+        }
+
+
+        // POST: Activities/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Teacher")]
+
+        public async Task<IActionResult> CreateActivity(ActivityViewModel activityViewModel)
+        {
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM student";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT student.id FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = " + activityViewModel.Activity.classId;
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            List<ActivityStudent> activityStudentList = new List<ActivityStudent>();
+            List<Event> eventList = new List<Event>();
+            //reads the data an stores it into the array
+            if (ModelState.IsValid)
+            {
+                _context.Add(activityViewModel.Activity);
+                await _context.SaveChangesAsync();
+                while (result.Read())
+                {
+                    activityStudentList.Add(new ActivityStudent
+                    {
+                        activityId = activityViewModel.Activity.activityId,
+                        studentId = result.GetInt32(0),
+                        calification = activityViewModel.ActivityStudent.calification,
+                        isSubmitted = activityViewModel.ActivityStudent.isSubmitted,
+                        isRated = false,
+                        canBeSubmittedLate = activityViewModel.ActivityStudent.canBeSubmittedLate,
+                        isLate = false,
+                        commentary = activityViewModel.ActivityStudent.commentary,
+                        submitDate = activityViewModel.ActivityStudent.submitDate,
+                    });
+                    eventList.Add(new Event
+                    {
+                        UserId = result.GetInt32(0).ToString() + "-U",
+                        Title = activityViewModel.Activity.Title,
+                        Start = activityViewModel.Activity.deadline,
+                        AllDay = false,
+                        Color = "#FF0000",
+                        TextColor = "#FFFFFF",
+                        ClassName = "event-important"
+                    });
+                }
+                _context.AddRange(activityStudentList);
+                _context.AddRange(eventList);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            getClassList();
+            return View(activityViewModel.Activity);
+        }
+
+        // GET: Activities/Edit/5
+        [Authorize(Roles = "Admin, Teacher")]
+
+        public async Task<IActionResult> EditActivity(int? id)
+        {
+            if (id == null || _context.Activity == null)
+            {
+                return NotFound();
+            }
+            getClassList();
+            var activity = await _context.Activity.FindAsync(id);
+            var activityStudent = await _context.ActivityStudent.FindAsync(id);
+            ActivityViewModel activityViewModel = new ActivityViewModel(activity, activityStudent);
+            if (activityViewModel == null)
+            {
+                return NotFound();
+            }
+            return View(activityViewModel);
+        }
+
+        // POST: Activities/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditActivity(int id, ActivityViewModel activityViewModel)
+        {
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            //counts table rows     
+            command.CommandText = "SELECT count(*) FROM student";
+            context.Database.OpenConnection();
+            DbDataReader counter = command.ExecuteReader();
+            //stores it into variaable 
+            counter.Read();
+            int count = counter.GetInt32(0);
+            counter.Close();
+            //gets relevant values from subject table
+            command.CommandText = "SELECT student.id FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = " + activityViewModel.Activity.classId;
+            context.Database.OpenConnection();
+            DbDataReader result = command.ExecuteReader();
+            //creates an array to store data in
+            List<ActivityStudent> res = new List<ActivityStudent>();
+            //reads the data an stores it into the array
+            if (ModelState.IsValid)
+            {
+                activityViewModel.ActivityStudent.activityId = activityViewModel.Activity.activityId = id;
+                _context.Update(activityViewModel.Activity);
+                await _context.SaveChangesAsync();
+                while (result.Read())
+                {
+                    res.Add(new ActivityStudent
+                    {
+                        activityId = activityViewModel.Activity.activityId,
+                        studentId = result.GetInt32(0),
+                        calification = activityViewModel.ActivityStudent.calification,
+                        isSubmitted = activityViewModel.ActivityStudent.isSubmitted,
+                        isRated = false,
+                        canBeSubmittedLate = activityViewModel.ActivityStudent.canBeSubmittedLate,
+                        isLate = false,
+                        commentary = activityViewModel.ActivityStudent.commentary,
+                        submitDate = activityViewModel.ActivityStudent.submitDate,
+                    });
+                }
+                _context.UpdateRange(res);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            getClassList();
+            return View(activityViewModel.Activity);
+        }
+
+        // GET: Activities/Delete/5
+        [Authorize(Roles = "Admin, Teacher")]
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _context.Activity == null)
+            {
+                return NotFound();
+            }
+
+            var activity = await _context.Activity
+                .FirstOrDefaultAsync(m => m.activityId == id);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            return View(activity);
+        }
+
+        // POST: Activities/Delete/5
+        [Authorize(Roles = "Admin, Teacher")]
+
+        [HttpPost, ActionName("ActivityDeleteActivity")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActivityDeleteConfirmed(int id)
+        {
+            if (_context.Activity == null)
+            {
+                return Problem("Entity set 'School_webappContext.Activity'  is null.");
+            }
+            var activity = await _context.Activity.FindAsync(id);
+            if (activity != null)
+            {
+                _context.Activity.Remove(activity);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        // GET: Activities/Activity/5
+        [Authorize(Roles = "Admin, Teacher")]
+        /*public async Task<IActionResult> Activity(int? id)
+        {
+            if (id == null || _context.ActivityStudent == null)
+            {
+                return NotFound();
+            }
+            var query = from a in _context.ActivityStudent
+                        join b in _context.Activity on a.activityId equals b.activityId
+                        where a.activityStudentId == id
+                        select new { a, b }; // proyecta el resultado en un tipo anónimo con las propiedades a y b
+            var actst = query.FirstOrDefault().a;
+            var act = query.FirstOrDefault().b;
+            ActivityViewModel activityViewModel = new ActivityViewModel(act, actst);
+
+
+            if (activityViewModel == null)
+            {
+                return NotFound();
+            }
+            return View(activityViewModel);
+        }*/
+
+        private bool ActivityExists(int id)
+        {
+            return (_context.Activity?.Any(e => e.activityId == id)).GetValueOrDefault();
+        }
+
+    // GET: Classes/Students/5
+    [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> Students(int? id)
         {
             MyDbContext context = new MyDbContext();
@@ -31,7 +387,7 @@ namespace School_webapp.Controllers
             var students = await _context.Student
                     .Join(_context.StudentClass,
                           s => s.id, // clave externa de Student
-                          c => int.Parse(c.studentId), // clave primaria de StudentClass
+                          c => Convert.ToInt32(c.studentId), // clave primaria de StudentClass
                           (s, c) => new { s, c }) // resultado del join
                     .Where(sc => sc.c.classId == id) // filtro por ClassId
                     .Select(sc => sc.s) // selección de los objetos Student
@@ -67,7 +423,7 @@ namespace School_webapp.Controllers
             {
                 foreach (var id in studentId)
                 {
-                    var studentClass = new StudentClass { studentId = id.ToString(), classId = classId };
+                    var studentClass = new StudentClass { studentId = id, classId = classId };
                     _context.Add(studentClass);
                 }
                 await _context.SaveChangesAsync();
@@ -79,11 +435,40 @@ namespace School_webapp.Controllers
 
 
         // GET: Classes
-        [Authorize(Roles = "Admin, Teacher")]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             using (var context = new MyDbContext())
             {
+                //get all classes with studentID = current user id
+                DbCommand command = context.Database.GetDbConnection().CreateCommand();
+                //counts table rows
+                var userid = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-U")[0];
+                command.CommandText = "SELECT count(*) FROM class join studentClass on class.id = studentclass.classId join student on student.id = studentclass.studentId where student.id = "
+                    + userid;
+                context.Database.OpenConnection();
+                DbDataReader counter = command.ExecuteReader();
+                //stores it into variaable
+                counter.Read();
+                int count = counter.GetInt32(0);
+                counter.Close();
+                //gets relevant values from subject table
+                command.CommandText = "SELECT class.id, class.name FROM class join studentClass on class.id = studentclass.classId join student on student.id = studentclass.studentId where student.id = " + userid;
+                context.Database.OpenConnection();
+                DbDataReader result = command.ExecuteReader();
+                //creates an array to store data in
+                string[][] res = new string[count][];
+                //reads the data an stores it into the array
+                int i = 0;
+                while (result.Read())
+                {
+                    res[i] = new string[2];
+                    res[i][0] = result.GetInt32(0).ToString();
+                    res[i][1] = result.GetString(1);
+                    i++;
+                }
+                //stores it into a ViewBag for it to be accessible from the view
+                ViewBag.classes = res;
                 GetSubjectList(context);
                 GetTeacherList(context);
                 return _context.Class != null ?
@@ -182,7 +567,7 @@ namespace School_webapp.Controllers
         }
 
         // POST: Classes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, Teacher")]
 
@@ -214,7 +599,7 @@ namespace School_webapp.Controllers
             {
                 return Problem("Entity set 'School_webappContext.StudentClass'  is null.");
             }
-            var student = await _context.StudentClass.FirstOrDefaultAsync(sc => int.Parse(sc.studentId) == id && sc.classId == classId);
+            var student = await _context.StudentClass.FirstOrDefaultAsync(sc => sc.studentId == id && sc.classId == classId);
             if (@student != null)
             {
                 _context.StudentClass.Remove(@student);

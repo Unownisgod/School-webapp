@@ -5,7 +5,7 @@
 }
 
 <h1>Index</h1>
-
+@if(!User.IsInRole("Student")){
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -23,6 +23,9 @@
             </th>
             <th>
                 Student List
+            </th>
+            <th>
+                Activities
             </th>
             <th></th>
         </tr>
@@ -43,17 +46,37 @@
             <td>
                     <a class="btn btn-primary" asp-action="Students" asp-route-id="@item.Id">Students</a>
             </td>
+            <td>
+                    <a class="btn btn-primary" asp-action="ActivityIndex" asp-route-id="@item.Id">Activities</a>
+            </td>
             <td class="input-group">
                 <a asp-action="Edit" class="btn btn-outline-primary me-2" asp-route-id="@item.Id">Edit</a>
                     <form method="post">
-                        <button class="btn btn-outline-danger" type="submit" asp-action="Delete" asp-route-id="@item.Id" onclick="return showAlert()">Delete</button>
+                        <button class="btn btn-outline-danger" type="submit" asp-action="DeleteConfirmed" asp-route-id="@item.Id" onclick="return showAlert()">Delete</button>
                     </form>
                 </td>
         </tr>
         i++;
 }
     </tbody>
-</table>
+    </table>
+}
+else
+{
+    <div class="cardview rounded-3" >
+        @foreach(string[] str in ViewBag.classes)
+        {
+            <div class="col-4">
+                <div class="card">
+                    <a asp-action="ActivityIndex" asp-route-id="@str[0]" class="stretched-link"/>
+                <div>
+                    <h3>@str[1]</h3>
+                </div>
+            </div>
+            </div>
+        }
+    </div>
+}
 <script>
     function showAlert() {
         var respuesta = confirm("Are you sure? You will delete it permanently");
