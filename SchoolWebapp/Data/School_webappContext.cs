@@ -34,10 +34,6 @@ namespace School_webapp.Data
 
         public DbSet<Models.StudentClass>? StudentClass { get; set; }
 
-        public DbSet<Models.Tutor>? Tutor { get; set; }
-
-        public DbSet<Models.TutorStudent>? TutorStudent { get; set; }
-
         public DbSet<Models.ActivityStudent>? ActivityStudent { get; set; }
 
         public DbSet<SchoolWebapp.Models.Event>? Event { get; set; }

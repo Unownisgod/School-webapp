@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - test</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://kit.fontawesome.com/eb0e3c6f30.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
@@ -27,7 +28,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="justify-content-center" style="width: 90%; margin: 0 auto; display: block;">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -41,5 +42,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
