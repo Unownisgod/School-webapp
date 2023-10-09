@@ -38,7 +38,14 @@
                 }
                 <div class="d-inline">
                     <div class="float-start w-75">
-                        <span class=""><a asp-action="ActivityStudents" asp-route-id="@item.activityId">@Html.DisplayFor(modelItem => item.Title)</a></span>
+                        @if(User.IsInRole("Student"))
+                        {
+                            <span class=""><a asp-action="Activity" asp-route-id="@item.activityId">@Html.DisplayFor(modelItem => item.Title)</a></span>
+                        }
+                        else
+                        {
+                            <span class=""><a asp-action="ActivityStudents" asp-route-id="@item.activityId">@Html.DisplayFor(modelItem => item.Title)</a></span>
+                        }
                         <br>
                         <p class="" style="color:gray; font-size:12px;">@desc</p>
                     </div>

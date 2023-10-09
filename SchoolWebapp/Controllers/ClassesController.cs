@@ -91,7 +91,14 @@ namespace School_webapp.Controllers
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
             var userid = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-U")[0];
             //gets the info from the activity and activitystudent tables
-            command.CommandText = "SELECT * FROM Activity join ActivityStudent on activity.activityid = activitystudent.activityid where activitystudent.activitystudentid = " + id;
+            if (User.IsInRole("Student"))
+            {
+                command.CommandText = "SELECT * FROM Activity join ActivityStudent on activity.activityid = activitystudent.activityid where activitystudent.activityid = " + id + " and activitystudent.studentId = " + userid;
+            }
+            else
+            {
+                command.CommandText = "SELECT * FROM Activity join ActivityStudent on activity.activityid = activitystudent.activityid where activitystudent.activitystudentid = " + id;
+            }
             context.Database.OpenConnection();
             DbDataReader data = command.ExecuteReader();
             data.Read();
