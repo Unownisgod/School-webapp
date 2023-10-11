@@ -9,17 +9,20 @@ using System.Data.Common;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace School_webapp.Controllers
 {
     public class ClassesController : Controller
     {
         private readonly School_webappContext _context;
+        UserManager<IdentityUser> _userManager;
 
-        public ClassesController(School_webappContext context)
+
+        public ClassesController(School_webappContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
-
+            _userManager = userManager;
         }
         // GET: Activities
         [Authorize]
@@ -804,8 +807,38 @@ namespace School_webapp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ActivityIndex));
         }
-
-    }
+        public async Task<IActionResult> UploadFile(int id)
+        { // Se comprueba si se ha seleccionado algún archivo
+          if (Request.Form.Files.Count > 0) {
+                string userName = User.Identity.Name;
+                // El nombre de usuario
+                var user = await _userManager.FindByNameAsync(userName);
+                // El objeto de usuario
+                var userId = user.Id;
+                // Se crea la carpeta de no existir
+                System.IO.Directory.Delete(Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId), true);
+                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId));
+                // Se obtiene la información del archivo
+                foreach (var file in Request.Form.Files)
+                {
+                    // Se obtiene el nombre del archivo
+                    string fileName = Path.GetFileName(file.FileName);
+                    // Se construye la ruta donde se guardará el archivo en el servidor
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId, fileName); 
+                    // Se guarda el archivo en el servidor
+                    using(var stream = System.IO.File.Create(filePath)) 
+                    {
+                        await file.CopyToAsync(stream); 
+                    } 
+                    // Se muestra un mensaje de confirmación
+                    ViewData["Message"] = "El archivo se ha subido correctamente"; 
+                }
+            } 
+            else { 
+                // Se muestra un mensaje de error
+                ViewData["Message"] = "No se ha seleccionado ningún archivo"; 
+            } return View(); }
+        }
 }
 
 internal class MyDbContext : DbContext
