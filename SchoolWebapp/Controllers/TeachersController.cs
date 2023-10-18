@@ -67,7 +67,7 @@ namespace School_webapp.Controllers
                 await _userManager.AddToRoleAsync(user, "Teacher");
                 return RedirectToAction(nameof(Index));
             }
-            return View(teacher);
+            return View();
         }
 
         // GET: Teachers/Edit/5
@@ -124,7 +124,7 @@ namespace School_webapp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(teacher);
+            return View();
         }
 
         // GET: Teachers/Delete/5

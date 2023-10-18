@@ -16,7 +16,7 @@ namespace School_webapp.Controllers
         }
 
         // GET: Subjects
-        [Authorize(Roles = "Admin, Teacher")]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> Index()
         {
@@ -48,7 +48,7 @@ namespace School_webapp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(subject);
+            return View();
         }
 
         // GET: Subjects/Edit/5
@@ -102,7 +102,7 @@ namespace School_webapp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(subject);
+            return View();
         }
 
         // POST: Subjects/Delete/5

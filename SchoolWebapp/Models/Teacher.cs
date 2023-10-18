@@ -14,5 +14,11 @@
 
         }
 
+        public Teacher(int id, string name, string lastName)
+        {
+            this.id = id;
+            this.name = name;
+            this.lastName = lastName;
+        }
     }
 }

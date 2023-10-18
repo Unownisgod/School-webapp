@@ -1,4 +1,6 @@
-﻿@model School_webapp.Models.Class
+﻿@using SchoolWebapp.Data;
+@model School_webapp.Models.Class
+@inject DataService data
 
 @{
     ViewData["Title"] = "Create";
@@ -21,12 +23,12 @@
                 <label asp-for="teacherId" class="control-label">Teacher</label>
                 <div class="input-group">
                     <select asp-for="teacherId" class="form-control">
-                @{
-                            foreach (var row in ViewBag.teacherList)
-                    {
-                        @Html.Raw("<option value='" + row[0] + "'>" + row[2] +", "+row[1]+ "</option>")
-                    }
-                }
+                        @{
+                            foreach (var item in data.GetTeachers())
+                                {
+                                    @Html.Raw("<option value='" + item.id + "'>" + item.lastName + ", "+item.name + "</option>")
+                                }
+                        }
                 </select>
                 <span class="input-group-btn">
                     <a asp-controller="Teachers" asp-action="create" class="btn btn-primary" type="button">+</a>
@@ -39,9 +41,9 @@
                 <div class="input-group mb-3">
                     <select asp-for="SubjectId" class="form-control">
                         @{
-                            foreach (var row in ViewBag.subject)
+                            foreach (var item in ViewBag.subject)
                             {
-                                @Html.Raw("<option value='" + row[0] + "'>" + row[1] +" "+row[2]+ "</option>")
+                                @Html.Raw("<option value='" + item[0] + "'>" + item[1] +" "+item[2]+ "</option>")
                             }
                         }
                     </select>

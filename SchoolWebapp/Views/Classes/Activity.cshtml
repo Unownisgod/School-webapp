@@ -14,19 +14,28 @@
 
                     @if (User.IsInRole("Student"))
                     {
-                        <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-route-id="@Model.Activity.activityId"> 
-                            <p>Selecciona un archivo: <input type="file" name="archivo" multiple/></p> 
-                            <p><input type="submit" value="Subir archivo"></p>
+                        <div style="@(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? " " : " pointer-events: none; opacity: 0.4;")">
+                            <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-route-id="@Model.Activity.activityId"  > 
+                                <p>Selecciona un archivo: <input type="file" name="archivo" multiple/></p> 
+                                <p><input type="submit" value="Subir archivo"></p>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="DownloadFile" asp-route-id="@Model.Activity.activityId">
+                            <input value="@Model.ActivityStudent.studentId" name="userId">
+                            <button type="submit">Download</button>
                         </form>
                     }
 
                 <div class="justify-content-center">
                     <table class="table table-hover table-responsive table-striped">
-                        <tr >
-                            <td colspan="1" class="bg-opacity-50 @(Model.ActivityStudent.calification>=5? "bg-success" : "bg-danger")">
+                    <tr class="bg-opacity-50 @(Model.ActivityStudent.calification>=5 && Model.ActivityStudent.isRated ? "bg-success" : Model.ActivityStudent.isRated ? "bg-danger" : "")">
+                            <td colspan="1" >
                                 <h5>Calification</h5>
                             </td>
-                            <td colspan="3" class="bg-opacity-50 @(Model.ActivityStudent.calification>=5? "bg-success" : "bg-danger")">
+                        <td colspan="3" >
                                 <p>@Model.ActivityStudent.calification</p>
                             </td>
                         </tr>
@@ -74,7 +83,6 @@
                             </tr>
                         }
                     </table>
-                    <input type="file" @(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? "" : "hidden")/>
                 </div>
             </div>
         </div>

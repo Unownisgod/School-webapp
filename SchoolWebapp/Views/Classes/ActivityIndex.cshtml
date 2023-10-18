@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<School_webapp.Models.Activity>
+@using SchoolWebapp.Data
+
+@inject DataService data
 
 @{
     ViewData["Title"] = "Index";
@@ -13,20 +16,24 @@
 @using System.Globalization;
 @{
     CultureInfo culture = new CultureInfo("en-EU");
+
+    // Gets the class id from the url
+    var classId = Convert.ToInt32(Context.GetRouteData().Values["id"]);
+
 }
 
 @{
     if (!User.IsInRole("Student"))
     {
         <p>
-            <a asp-action="createActivity">Create New</a>
+            <a asp-action="createActivity" asp-route-id="@classId">Create New</a>
             <hr />
         </p>
     }
 }
-<div class="row justify-content-center">
+ <div class="row justify-content-center">
     <div class="col-12">
-        @foreach (var item in Model)
+        @foreach (var item in data.GetActivitiesOnClass(classId))
         {
             //if user is not student
             if (User.IsInRole("Student") && item.ispublic || User.IsInRole("Teacher") || User.IsInRole("Admin"))
@@ -85,7 +92,6 @@
         }
     </div>
 </div>
-
 <script>
     function showAlert() {
         var respuesta = confirm("Are you sure? You will delete it permanently");

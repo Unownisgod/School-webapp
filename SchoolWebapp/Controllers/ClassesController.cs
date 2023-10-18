@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using System.Net;
+using System.IO.Compression;
+using System.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace School_webapp.Controllers
 {
@@ -25,20 +29,23 @@ namespace School_webapp.Controllers
             _userManager = userManager;
         }
         // GET: Activities
+        [HttpGet("Identity/Classes/ActivityIndex/{id}")]
         [Authorize]
         public async Task<IActionResult> ActivityIndex()
         {
-            return _context.Activity != null ?
-                        View(await _context.Activity.ToListAsync()) :
-                        Problem("Entity set 'School_webappContext.Activity'  is null.");
+            return _context.Activity != null ? 
+                View(await _context.Activity.ToListAsync()) : 
+                Problem("Entity set 'School_webappContext.activity'  is null.");
+
         }
 
         [Authorize(Roles = "Admin, Teacher")]
+        [HttpGet("Identity/Classes/createActivity/{id}")]
+
         // GET: Activities/Create
         public IActionResult CreateActivity()
         {
-            getClassList();
-            GetTeacherList();
+            ViewBag.classId = Request.RouteValues["id"];
             return View();
         }
 
@@ -87,12 +94,12 @@ namespace School_webapp.Controllers
         }
 
         [Authorize]
-        public IActionResult Activity(int? id, int activityId)
+        public IActionResult Activity(int? id)
         {
             //select the students from the database
             var context = new MyDbContext();
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
-            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-U")[0];
+            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-")[0];
             //gets the info from the activity and activitystudent tables
             if (User.IsInRole("Student"))
             {
@@ -125,8 +132,8 @@ namespace School_webapp.Controllers
                 isRated = data.GetBoolean(11),
                 canBeSubmittedLate = data.GetBoolean(12),
                 isLate = data.GetBoolean(13),
-                commentary = data.IsDBNull(14) ? null : data.GetString(13),
-                submitDate = data.IsDBNull(15) ? null : data.GetDateTime(13),
+                commentary = data.IsDBNull(14) ? null : data.GetString(14),
+                submitDate = data.IsDBNull(15) ? null : data.GetDateTime(15),
             };
             //stores it into activityviewmodel
             var viewModel = new ActivityViewModel
@@ -179,16 +186,9 @@ namespace School_webapp.Controllers
 
         public async Task<IActionResult> CreateActivity(ActivityViewModel activityViewModel)
         {
+
             var context = new MyDbContext();
             DbCommand command = context.Database.GetDbConnection().CreateCommand();
-            //counts table rows     
-            command.CommandText = "SELECT count(*) FROM student";
-            context.Database.OpenConnection();
-            DbDataReader counter = command.ExecuteReader();
-            //stores it into variaable 
-            counter.Read();
-            int count = counter.GetInt32(0);
-            counter.Close();
             //gets relevant values from subject table
             command.CommandText = "SELECT student.id FROM student join studentClass on student.id = studentclass.studentId where studentClass.classid = " + activityViewModel.Activity.classId;
             context.Database.OpenConnection();
@@ -229,10 +229,9 @@ namespace School_webapp.Controllers
                 _context.AddRange(activityStudentList);
                 _context.AddRange(eventList);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(ActivityIndex));
+                return RedirectToAction(nameof(ActivityIndex), activityViewModel.Activity.classId);
             }
-            getClassList();
-            return View(activityViewModel.Activity);
+            return View();
         }
 
         // GET: Activities/Edit/5
@@ -301,10 +300,10 @@ namespace School_webapp.Controllers
                 }
                 _context.UpdateRange(res);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(ActivityIndex));
+                return RedirectToAction(nameof(ActivityIndex), activityViewModel.Activity.classId);
             }
             getClassList();
-            return View(activityViewModel.Activity);
+            return View();
         }
 
         // POST: Activities/Delete/5
@@ -325,7 +324,8 @@ namespace School_webapp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ActivityIndex));
+
+            return RedirectToAction(nameof(ActivityIndex), activity.classId);
         }
         private bool ActivityExists(int id)
         {
@@ -388,7 +388,7 @@ namespace School_webapp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Students", new { id = classId });
             }
-            return View(studentId);
+            return View();
         }
 
 
@@ -399,35 +399,6 @@ namespace School_webapp.Controllers
         {
             using (var context = new MyDbContext())
             {
-                //get all classes with studentID = current user id
-                DbCommand command = context.Database.GetDbConnection().CreateCommand();
-                //counts table rows
-                var userid = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-U")[0];
-                command.CommandText = "SELECT count(*) FROM class join studentClass on class.id = studentclass.classId join student on student.id = studentclass.studentId where student.id = "
-                    + userid;
-                context.Database.OpenConnection();
-                DbDataReader counter = command.ExecuteReader();
-                //stores it into variaable
-                counter.Read();
-                int count = counter.GetInt32(0);
-                counter.Close();
-                //gets relevant values from subject table
-                command.CommandText = "SELECT class.id, class.name FROM class join studentClass on class.id = studentclass.classId join student on student.id = studentclass.studentId where student.id = " + userid;
-                context.Database.OpenConnection();
-                DbDataReader result = command.ExecuteReader();
-                //creates an array to store data in
-                string[][] res = new string[count][];
-                //reads the data an stores it into the array
-                int i = 0;
-                while (result.Read())
-                {
-                    res[i] = new string[2];
-                    res[i][0] = result.GetInt32(0).ToString();
-                    res[i][1] = result.GetString(1);
-                    i++;
-                }
-                //stores it into a ViewBag for it to be accessible from the view
-                ViewBag.classes = res;
                 GetSubjectList(context);
                 GetTeacherList();
                 return _context.Class != null ?
@@ -442,7 +413,6 @@ namespace School_webapp.Controllers
         {
             using (var context = new MyDbContext())
             {
-                GetTeacherInfo(context);
                 GetSubjectInfo(context);
                 return View();
             }
@@ -462,7 +432,7 @@ namespace School_webapp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@class);
+            return View();
         }
 
         // GET: Classes/Edit/5
@@ -473,7 +443,6 @@ namespace School_webapp.Controllers
             using (var context = new MyDbContext())
             {
                 GetSubjectInfo(context);
-                GetTeacherInfo(context);
             }
             if (id == null || _context.Class == null)
             {
@@ -522,7 +491,7 @@ namespace School_webapp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@class);
+            return View();
         }
 
         // POST: Classes/Delete/5
@@ -632,36 +601,6 @@ namespace School_webapp.Controllers
             }
             //stores it into a ViewBag for it to be accessible from the view
             return ViewBag.subject = res;
-        }
-        private dynamic GetTeacherInfo(MyDbContext context)
-        {
-            DbCommand command = context.Database.GetDbConnection().CreateCommand();
-            //counts table rows     
-            command.CommandText = "SELECT count(*) FROM teacher";
-            context.Database.OpenConnection();
-            DbDataReader counter = command.ExecuteReader();
-            //stores it into variaable 
-            counter.Read();
-            int count = counter.GetInt32(0);
-            counter.Close();
-            //gets relevant values from subject table
-            command.CommandText = "SELECT id, name, lastName FROM teacher";
-            context.Database.OpenConnection();
-            DbDataReader result = command.ExecuteReader();
-            //creates an array to store data in
-            string[][] res = new string[count][];
-            //reads the data an stores it into the array
-            int i = 0;
-            while (result.Read())
-            {
-                res[i] = new string[3];
-                res[i][0] = result.GetInt32(0).ToString();
-                res[i][1] = result.GetString(1);
-                res[i][2] = result.GetString(2);
-                i++;
-            }
-            //stores it into a ViewBag for it to be accessible from the view
-            return ViewBag.teacher = res;
         }
         private dynamic GetTeacherList()
         {
@@ -780,7 +719,7 @@ namespace School_webapp.Controllers
             //update database
             _context.Update(activity);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ActivityIndex));
+            return RedirectToAction(nameof(ActivityIndex), activity.classId);
 
         }
         public async Task<IActionResult> Unpublish(int? id)
@@ -805,46 +744,127 @@ namespace School_webapp.Controllers
             //update database
             _context.Update(activity);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ActivityIndex));
+            return RedirectToAction(nameof(ActivityIndex), activity.classId);
         }
         public async Task<IActionResult> UploadFile(int id)
         { // Se comprueba si se ha seleccionado algún archivo
-          if (Request.Form.Files.Count > 0) {
+            if (Request.Form.Files.Count > 0)
+            {
                 string userName = User.Identity.Name;
                 // El nombre de usuario
                 var user = await _userManager.FindByNameAsync(userName);
                 // El objeto de usuario
                 var userId = user.Id;
+                // Se elimina la carpeta de existir
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId);
+                if (Directory.Exists(path))
+                {
+                    System.IO.Directory.Delete(path, true);
+                }
                 // Se crea la carpeta de no existir
-                System.IO.Directory.Delete(Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId), true);
-                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId));
+                Directory.CreateDirectory(path);
                 // Se obtiene la información del archivo
                 foreach (var file in Request.Form.Files)
                 {
                     // Se obtiene el nombre del archivo
                     string fileName = Path.GetFileName(file.FileName);
                     // Se construye la ruta donde se guardará el archivo en el servidor
-                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId, fileName); 
+                    string filePath = Path.Combine(path, fileName);
                     // Se guarda el archivo en el servidor
-                    using(var stream = System.IO.File.Create(filePath)) 
+                    using (var stream = System.IO.File.Create(filePath))
                     {
-                        await file.CopyToAsync(stream); 
-                    } 
+                        await file.CopyToAsync(stream);
+                    }
                     // Se muestra un mensaje de confirmación
-                    ViewData["Message"] = "El archivo se ha subido correctamente"; 
+                    ViewData["Message"] = "El archivo se ha subido correctamente";
                 }
-            } 
-            else { 
+                //sets the activity as submitted
+                var context = new MyDbContext();
+                DbCommand command = context.Database.GetDbConnection().CreateCommand();
+                // Separa el -U del userId
+                userId = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-")[0];
+                command.CommandText = "SELECT * FROM activitystudent where activityId = " + id + " and studentId = " + userId;
+                context.Database.OpenConnection();
+                DbDataReader result = await command.ExecuteReaderAsync();
+                //creates an array to store data in
+                //store it into object
+                result.Read();
+                var activityStudent = new ActivityStudent
+                {
+                    activityStudentId = result.GetInt32(0),
+                    studentId = result.GetInt32(1),
+                    activityId = result.GetInt32(2),
+                    calification = result.GetFloat(3),
+                    isSubmitted = true,
+                    isRated = result.GetBoolean(5),
+                    canBeSubmittedLate = result.GetBoolean(6),
+                    isLate = result.GetBoolean(7),
+                    commentary = result.IsDBNull(8) ? null : result.GetString(8),
+                    submitDate = DateTime.Now,
+                };
+                //update database
+                _context.Update(activityStudent);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Activity", "Classes", new { id = activityStudent.activityId });
+            }
+            else
+            {
                 // Se muestra un mensaje de error
-                ViewData["Message"] = "No se ha seleccionado ningún archivo"; 
-            } return View(); }
+                ViewData["Message"] = "No se ha seleccionado ningún archivo";
+            }
+            return View();
         }
-}
 
-internal class MyDbContext : DbContext
-{
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        [Authorize(Roles = "Admin, Teacher")]
+        public async Task<IActionResult> DownloadFile(int id, int userId)
+        {
+            // Especificar la ruta local del archivo que quieres descargar
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId.ToString() + "-U");
+
+            // Especificar el nombre del archivo .zip que quieres crear
+            string zip = path + ".zip";
+
+            //if zip file exists
+            if (System.IO.File.Exists(zip))
+            {
+                System.IO.File.Delete(zip);
+            }
+
+            // Comprimir la carpeta en el archivo .zip con un nivel de compresión óptimo
+            ZipFile.CreateFromDirectory(path, zip, CompressionLevel.Optimal, false);
+
+            // Obtener la instancia de HttpResponse
+            HttpResponse response = HttpContext.Response;
+
+            // Limpiar el contenido de la respuesta
+            response.Clear();
+
+            // Especificar el tipo de contenido como application/zip
+            response.ContentType = "application/zip";
+
+            // Especificar el nombre del archivo para la descarga
+            response.Headers.Append("Content-Disposition", "attachment; filename=\"" + id.ToString() + "-" + userId.ToString() + "-U.zip\"");
+
+            // Leer el contenido del archivo .zip como un Stream
+            using var fileStream = System.IO.File.OpenRead(zip);
+
+            // Obtener un Stream a partir de la tubería de la respuesta
+            using var responseStream = response.BodyWriter.AsStream();
+
+            // Copiar el contenido del archivo al Stream de la respuesta de forma asíncrona
+            await fileStream.CopyToAsync(responseStream);
+
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+    }
+
+
+
+    internal class MyDbContext : DbContext
     {
-        optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=School_webapp.Data;Trusted_Connection=True;MultipleActiveResultSets=true");
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=School_webapp.Data;Trusted_Connection=True;MultipleActiveResultSets=true");
+        }
     }
 }

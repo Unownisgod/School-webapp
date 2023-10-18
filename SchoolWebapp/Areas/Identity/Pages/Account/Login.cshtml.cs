@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using IdentitySchoolWebap.Models;
+using System.Linq.Expressions;
 
 namespace IdentitySchoolWebap.Areas.Identity.Pages.Account
 {
@@ -111,22 +112,31 @@ namespace IdentitySchoolWebap.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            var user = await _userManager.FindByNameAsync(Input.Username);
-            var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-            if (user != null)
+            try
             {
-
-                // Intenta iniciar sesión sin verificar el correo electrónico
-
-                if (result.Succeeded)
+                var user = await _userManager.FindByNameAsync(Input.Username);
+                var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                if (user != null)
                 {
-                    if (string.IsNullOrWhiteSpace(user.Email))
+
+                    // Intenta iniciar sesión sin verificar el correo electrónico
+
+                    if (result.Succeeded)
                     {
-                        return RedirectToPage("/Account/Manage/Email");
+                        if (string.IsNullOrWhiteSpace(user.Email))
+                        {
+                            return RedirectToPage("/Account/Manage/Email");
+                        }
+                        return RedirectToAction("Index", "Home");
                     }
-                    return RedirectToPage("/");
-                }
             }
+
+                }
+                catch (ArgumentNullException)
+                {
+                    return Page();
+                }
+            
 
             // If we got this far, something failed, redisplay form
             return Page();

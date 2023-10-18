@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<School_webapp.Models.Class>
+@using SchoolWebapp.Data
+@using System.Security.Claims;
+
+@inject DataService data
 
 @{
     ViewData["Title"] = "Index";
@@ -13,7 +17,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Name
             </th>
             <th>
                 Teacher
@@ -31,8 +35,12 @@
         </tr>
     </thead>
     <tbody>
-    @{int i = 0;}
-@foreach (var item in Model) {
+    @{
+        int i = 0;
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-")[0];
+    }
+            @foreach (var item in data.GetClassesWithTeacher(userId))
+            {
             <tr>
                 <td>
                 @Html.DisplayFor(modelItem => item.Name)
