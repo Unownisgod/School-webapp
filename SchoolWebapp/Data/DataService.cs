@@ -1,6 +1,5 @@
 ﻿using School_webapp.Data;
 using School_webapp.Models;
-using System.Linq;
 
 namespace SchoolWebapp.Data
 {
@@ -70,18 +69,19 @@ namespace SchoolWebapp.Data
             }
             return teachers;
         }
-        public List<Activity> GetActivitiesOnClass(int classid) {
-            var resultado = from a in _context.Activity
-                            where a.classId == classid
-                            select new { a.activityId, a.Title, a.Description, a.deadline, a.classId };
+        public List<Activity> GetActivitiesOnClass(int classid)
+        {
+                var resultado = from a in _context.Activity
+                                where a.classId == classid
+                                select new { a };
 
-            List<Activity> activities = new List<Activity>();
+                List<Activity> activities = new List<Activity>();
 
-            foreach (var item in resultado)
-            {
-                activities.Add(new Activity(item.activityId, item.Title, item.Description, item.deadline, item.classId));
-            }
-            return activities;
+                foreach (var item in resultado)
+                {
+                    activities.Add(item.a); // Aquí accedemos a la propiedad a
+                }
+                return activities;
 
         }
     }

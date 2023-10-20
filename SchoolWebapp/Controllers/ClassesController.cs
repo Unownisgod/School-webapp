@@ -752,7 +752,7 @@ namespace School_webapp.Controllers
             //update database
             _context.Update(activity);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ActivityIndex), activity.classId);
+            return Redirect(Request.Headers["Referer"].ToString());
 
         }
         public async Task<IActionResult> Unpublish(int? id)
@@ -777,7 +777,7 @@ namespace School_webapp.Controllers
             //update database
             _context.Update(activity);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ActivityIndex), activity.classId);
+            return Redirect(Request.Headers["Referer"].ToString());
         }
         public async Task<IActionResult> UploadFile(int id)
         { // Se comprueba si se ha seleccionado algún archivo

@@ -17,7 +17,7 @@
                         <div style="@(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? " " : " pointer-events: none; opacity: 0.4;")">
                             <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-route-id="@Model.Activity.activityId"  > 
                                 <p>Selecciona un archivo: <input type="file" name="archivo" multiple/></p> 
-                                <p><input type="submit" value="Subir archivo"></p>
+                                <p><input type="submit" value="Upload"></p>
                             </form>
                         </div>
                     }
