@@ -14,5 +14,11 @@
         public DateTime? submitDate { get; set; }
 
         public ActivityStudent() { }
+
+        public ActivityStudent(int activityId, int studentId)
+        {
+            this.activityId = activityId;
+            this.studentId = studentId;
+        }
     }
 }

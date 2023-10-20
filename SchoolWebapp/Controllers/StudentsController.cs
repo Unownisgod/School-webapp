@@ -11,10 +11,10 @@ namespace School_webapp.Controllers
     public class StudentsController : Controller
     {
         private readonly School_webappContext _context;
-        private readonly Microsoft.AspNetCore.Identity.UserManager<IdentityUser> _userManager;
-        private readonly Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public StudentsController(School_webappContext context, Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userManager)
+        public StudentsController(School_webappContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;

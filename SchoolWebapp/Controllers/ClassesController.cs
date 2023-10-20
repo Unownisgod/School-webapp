@@ -14,6 +14,7 @@ using System.Net;
 using System.IO.Compression;
 using System.Web;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 
 namespace School_webapp.Controllers
 {
@@ -383,6 +384,16 @@ namespace School_webapp.Controllers
                 foreach (var id in studentId)
                 {
                     var studentClass = new StudentClass { studentId = id, classId = classId };
+
+                    var query = from a in _context.Activity
+                                where a.classId == classId
+                                select a.activityId;
+
+                    foreach (var activityId in query)
+                    {
+                        ActivityStudent activityStudent = new ActivityStudent(activityId, id);
+                        _context.Add(activityStudent);
+                    }
                     _context.Add(studentClass);
                 }
                 await _context.SaveChangesAsync();
@@ -520,6 +531,21 @@ namespace School_webapp.Controllers
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, Teacher")]
 
+    //                    foreach (var id in studentId)
+    //            {
+    //                var studentClass = new StudentClass { studentId = id, classId = classId };
+
+    //    var query = from a in _context.Activity
+    //                where a.classId == classId
+    //                select a.activityId;
+
+    //                foreach (var activityId in query)
+    //                {
+    //                    ActivityStudent activityStudent = new ActivityStudent(activityId, id);
+    //    _context.Add(activityStudent);
+    //                }
+    //_context.Add(studentClass);
+
         public async Task<IActionResult> StudentDeleteConfirmed(int classId, int id)
         {
             //falta pasar el classId
@@ -530,9 +556,16 @@ namespace School_webapp.Controllers
             var student = await _context.StudentClass.FirstOrDefaultAsync(sc => sc.studentId == id && sc.classId == classId);
             if (@student != null)
             {
+            var query = from a in _context.ActivityStudent
+                        join b in _context.Activity on a.activityId equals b.activityId
+                        where a.studentId == id && b.classId == classId
+                        select a;
                 _context.StudentClass.Remove(@student);
+                foreach (var item in query)
+                {
+                    _context.ActivityStudent.RemoveRange(item);
+                }
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction("Students", new { id = classId });
         }
@@ -855,6 +888,32 @@ namespace School_webapp.Controllers
             await fileStream.CopyToAsync(responseStream);
 
             return Redirect(Request.Headers["Referer"].ToString());
+        }
+        [HttpPost]
+        public Task<IActionResult> rate(int id, string calification)
+        {
+            float calificationF = Single.Parse(calification, new CultureInfo("EN-ES"));
+            if (calificationF > 0)
+            {
+                var activityStudent = (from a in _context.ActivityStudent
+                                    where a.activityStudentId == id
+                                    select a).FirstOrDefault();
+                _context.ActivityStudent.Update(activityStudent);
+                activityStudent.calification = Single.Parse(calification, new CultureInfo("EN-ES"));
+                activityStudent.isRated = true;
+                _context.SaveChanges();
+            }
+            return Task.FromResult<IActionResult>(Redirect(Request.Headers["Referer"].ToString()));
+        }
+        public Task<IActionResult> comment(int id, string commentary)
+        {
+            var activityStudent = (from a in _context.ActivityStudent
+                                    where a.activityStudentId == id
+                                    select a).FirstOrDefault();
+            _context.ActivityStudent.Update(activityStudent);
+            activityStudent.commentary = commentary;
+            _context.SaveChanges();
+            return Task.FromResult<IActionResult>(Redirect(Request.Headers["Referer"].ToString()));
         }
     }
 

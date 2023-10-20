@@ -24,8 +24,8 @@
                     else
                     {
                         <form method="post" asp-action="DownloadFile" asp-route-id="@Model.Activity.activityId">
-                            <input value="@Model.ActivityStudent.studentId" name="userId">
-                            <button type="submit">Download</button>
+                            <input value="@Model.ActivityStudent.studentId" name="userId" hidden>
+                            <button type="submit" class="" @(Model.ActivityStudent.isSubmitted ? "" : "disabled")>Download</button>
                         </form>
                     }
 
@@ -35,8 +35,19 @@
                             <td colspan="1" >
                                 <h5>Calification</h5>
                             </td>
-                        <td colspan="3" >
+                            <td colspan="3" >
+                            @if (!User.IsInRole("Student"))
+                            {
+                                <form method="post" asp-action="rate">
+                                    <input value="@ViewContext.RouteData.Values["id"]" name="id" hidden>
+                                    <input name="calification" type="number" step="any" max="10" min="0" placeholder="@Model.ActivityStudent.calification" value="@Model.ActivityStudent.calification" />
+                                    <button type="submit">Update</button>
+                                </form>
+                            }
+                            else
+                            {
                                 <p>@Model.ActivityStudent.calification</p>
+                            }
                             </td>
                         </tr>
                         <tr>
@@ -44,7 +55,18 @@
                                 <h5>Commentary</h5>
                             </td>
                             <td colspan="3">
+                            @if (!User.IsInRole("Student"))
+                            {
+                                <form method="post" asp-action="comment">
+                                    <input value="@ViewContext.RouteData.Values["id"]" name="id" hidden>
+                                    <input name="commentary" type="text" placeholder="@Model.ActivityStudent.commentary" />
+                                    <button type="submit">Update</button>
+                                </form>
+                            }
+                            else
+                            {
                                 <p>@Model.ActivityStudent.commentary</p>
+                            }
                             </td>
                         </tr>
                         @{
