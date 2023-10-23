@@ -779,6 +779,52 @@ namespace School_webapp.Controllers
             await _context.SaveChangesAsync();
             return Redirect(Request.Headers["Referer"].ToString());
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> DeleteFile(int id)
+        {
+            string userName = User.Identity.Name;
+            // El nombre de usuario
+            var user = await _userManager.FindByNameAsync(userName);
+            // El objeto de usuario
+            var userId = user.Id;
+            // Se elimina la carpeta de existir
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", id.ToString(), userId);
+            if (Directory.Exists(path))
+            {
+                System.IO.Directory.Delete(path, true);
+            }
+            var context = new MyDbContext();
+            DbCommand command = context.Database.GetDbConnection().CreateCommand();
+            userId = User.FindFirstValue(ClaimTypes.NameIdentifier).Split("-")[0];
+            command.CommandText = "SELECT * FROM activitystudent where activityId = " + id + " and studentId = " + userId;
+            context.Database.OpenConnection();
+            DbDataReader result = await command.ExecuteReaderAsync();
+            //creates an array to store data in
+            //store it into object
+            result.Read();
+            var activityStudent = new ActivityStudent
+            {
+                activityStudentId = result.GetInt32(0),
+                studentId = result.GetInt32(1),
+                activityId = result.GetInt32(2),
+                calification = result.GetFloat(3),
+                isSubmitted = false,
+                isRated = result.GetBoolean(5),
+                canBeSubmittedLate = result.GetBoolean(6),
+                isLate = result.GetBoolean(7),
+                commentary = result.IsDBNull(8) ? null : result.GetString(8),
+                submitDate = DateTime.Now,
+            };
+            //update database
+            _context.Update(activityStudent);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Activity", "Classes", new { id = activityStudent.activityId });
+
+
+        }
+
         public async Task<IActionResult> UploadFile(int id)
         { // Se comprueba si se ha seleccionado algún archivo
             if (Request.Form.Files.Count > 0)
@@ -845,7 +891,7 @@ namespace School_webapp.Controllers
                 // Se muestra un mensaje de error
                 ViewData["Message"] = "No se ha seleccionado ningún archivo";
             }
-            return View();
+            return RedirectToAction("Activity", "Classes", new { id = id });
         }
 
         [Authorize(Roles = "Admin, Teacher")]

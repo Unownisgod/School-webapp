@@ -4,38 +4,67 @@
     ViewData["Title"] = "Activity";
 }
 
-    <div class="container">
-        <div class="bg-opacity-50 bg-dark rounded-3" style="--bs-bg-opacity: .2;">
-            <div class="m-2">
-                <h1>@Model.Activity.Title</h1>
-                <hr />
-                <p>@Model.Activity.Description</p>
-                <br /><br />
+<div class="container">
+    <div class="bg-opacity-50 bg-dark rounded-3" style="--bs-bg-opacity: .2;">
+        <div class="m-2">
+            <h1>@Model.Activity.Title</h1>
+            <hr />
+            <p>@Model.Activity.Description</p>
+            <br /><br />
 
-                    @if (User.IsInRole("Student"))
-                    {
-                        <div style="@(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? " " : " pointer-events: none; opacity: 0.4;")">
-                            <form method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-route-id="@Model.Activity.activityId"  > 
-                                <p>Selecciona un archivo: <input type="file" name="archivo" multiple/></p> 
-                                <p><input type="submit" value="Upload"></p>
-                            </form>
+            @if (User.IsInRole("Student"))
+            {
+                <div style="@(DateTime.Now < @Model.Activity.deadline || @Model.ActivityStudent.canBeSubmittedLate ? " " : " pointer-events: none; opacity: 0.4;")">
+                    <form id="delete" method="post" enctype="multipart/form-data" asp-action="DeleteFile" asp-route-id="@Model.Activity.activityId" class="boton-inline">
+                    </form>
+                        <div class="container">
+                            <div class="row">
+                                <label for="file-input" class="text-center">
+                                    <div class="col-md-6 offset-md-3">
+                                    <form id="upload" method="post" enctype="multipart/form-data" asp-action="UploadFile" asp-route-id="@Model.Activity.activityId" class="boton-inline">
+                                        <div class="upload-box border border-dark p-3">
+                                            <div class="upload-area p-2 text-center">
+                                                <input type="file" id="file-input" name="archivo" multiple hidden>
+                                                <i class="fa fa-upload" aria-hidden="true"></i>
+                                            </div>
+                                            <p class="text-center">Drag to upload</p>
+                                        </div>
+                                    </form>
+                                    </div>
+                                </label>
+                                <p class="text-center mt-2">
+                                    <input type="submit" value="Upload" form="upload">
+                                    <input type="submit" value="Delete" form="delete"> 
+                                </p>
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <form method="post" asp-action="DownloadFile" asp-route-id="@Model.Activity.activityId">
-                            <input value="@Model.ActivityStudent.studentId" name="userId" hidden>
-                            <button type="submit" class="" @(Model.ActivityStudent.isSubmitted ? "" : "disabled")>Download</button>
-                        </form>
-                    }
+                </div>
+            }
+            else
+            {
+                <form method="post" asp-action="DownloadFile" asp-route-id="@Model.Activity.activityId">
+                    <input value="@Model.ActivityStudent.studentId" name="userId" hidden>
+                    <div class="container">
+                        <div class="row justify-content-center mb-3">
+                            <button type="submit" class="border border-dark p-3 bg-transparent w-50 " @(Model.ActivityStudent.isSubmitted ? "" : "disabled")>
+                                    <div class="upload-area p-2 text-center justify-content-center">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                        <p class="text-center">Download</p>
+                                    </div>
+                            </button>
+                                </div>
+                    </div>
 
-                <div class="justify-content-center">
-                    <table class="table table-hover table-responsive table-striped">
+                </form>
+            }
+
+            <div class="justify-content-center">
+                <table class="table table-hover table-responsive table-striped">
                     <tr class="bg-opacity-50 @(Model.ActivityStudent.calification>=5 && Model.ActivityStudent.isRated ? "bg-success" : Model.ActivityStudent.isRated ? "bg-danger" : "")">
-                            <td colspan="1" >
-                                <h5>Calification</h5>
-                            </td>
-                            <td colspan="3" >
+                        <td colspan="1">
+                            <h5>Calification</h5>
+                        </td>
+                        <td colspan="3">
                             @if (!User.IsInRole("Student"))
                             {
                                 <form method="post" asp-action="rate">
@@ -48,13 +77,13 @@
                             {
                                 <p>@Model.ActivityStudent.calification</p>
                             }
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1">
-                                <h5>Commentary</h5>
-                            </td>
-                            <td colspan="3">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1">
+                            <h5>Commentary</h5>
+                        </td>
+                        <td colspan="3">
                             @if (!User.IsInRole("Student"))
                             {
                                 <form method="post" asp-action="comment">
@@ -67,45 +96,45 @@
                             {
                                 <p>@Model.ActivityStudent.commentary</p>
                             }
-                            </td>
-                        </tr>
-                        @{
-                            DateTime deadline = Model.Activity.deadline;
-                            DateTime now = DateTime.Now;
-                            bool canBeSubmittedLate = Model.ActivityStudent.canBeSubmittedLate;
-                            string style = "";
-                            if (now > deadline)
-                            {
-                                style = "bg-danger";
-                            }
-                            else if(@Model.ActivityStudent.isSubmitted)
-                            {
-                                style = "bg-success";
-                            }
-
-                            <tr>
-
-                                <td colspan="1" class="@style bg-opacity-50">
-                                    <h5>Time left</h5>
-                                </td>
-                                @{
-                                    if (Model.ActivityStudent.isSubmitted)
-                                    {
-                                        <td colspan="3" class="@style bg-opacity-50">
-                                            <p>@(Model.Activity.deadline.Subtract(@Model.ActivityStudent.submitDate.Value).ToString("d' días, 'hh':'mm':'ss"))</p>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td colspan="3" class="@style bg-opacity-50">
-                                            <p>@(Model.Activity.deadline.Subtract(DateTime.Now).ToString("d' días, 'hh':'mm':'ss"))</p>
-                                        </td>
-                                    }
-                                }
-                            </tr>
+                        </td>
+                    </tr>
+                    @{
+                        DateTime deadline = Model.Activity.deadline;
+                        DateTime now = DateTime.Now;
+                        bool canBeSubmittedLate = Model.ActivityStudent.canBeSubmittedLate;
+                        string style = "";
+                        if (now > deadline)
+                        {
+                            style = "bg-danger";
                         }
-                    </table>
-                </div>
+                        else if (@Model.ActivityStudent.isSubmitted)
+                        {
+                            style = "bg-success";
+                        }
+
+                        <tr>
+
+                            <td colspan="1" class="@style bg-opacity-50">
+                                <h5>Time left</h5>
+                            </td>
+                            @{
+                                if (Model.ActivityStudent.isSubmitted)
+                                {
+                                    <td colspan="3" class="@style bg-opacity-50">
+                                        <p>@(Model.Activity.deadline.Subtract(@Model.ActivityStudent.submitDate.Value).ToString("d' días, 'hh':'mm':'ss"))</p>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td colspan="3" class="@style bg-opacity-50">
+                                        <p>@(Model.Activity.deadline.Subtract(DateTime.Now).ToString("d' días, 'hh':'mm':'ss"))</p>
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                </table>
             </div>
         </div>
     </div>
+</div>
