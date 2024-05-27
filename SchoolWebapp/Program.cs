@@ -93,28 +93,24 @@ using var scope = app.Services.CreateScope();
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
-    dbContext.Users.Add(new IdentityUser
+    //check if user 0 exsts
+    if (!dbContext.Users.Any(u => u.Id == "0"))
     {
-        UserName = "Admin",
-        NormalizedUserName = "ADMIN",
-        Email = "",
-        Id = "0",
-        PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "password"),
-    });
-    dbContext.UserRoles.Add(new IdentityUserRole<string>
-    {
-        RoleId = "279dc6f5-1e97-4855-951b-fe522e56dd95",
-        UserId = "0"
-    });
-    try
-    {
+        dbContext.Users.Add(new IdentityUser
+        {
+            UserName = "Admin",
+            NormalizedUserName = "ADMIN",
+            Email = "",
+            Id = "0",
+            PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "password"),
+        });
+        dbContext.UserRoles.Add(new IdentityUserRole<string>
+        {
+            RoleId = "279dc6f5-1e97-4855-951b-fe522e56dd95",
+            UserId = "0"
+        });
         await dbContext.SaveChangesAsync();
     }
-    catch (DbUpdateException)
-    {
-
-    }
-
 }
 
 app.Run();
