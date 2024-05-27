@@ -10,7 +10,7 @@ A clone of the popular learning management system Moodle, built with ASP.NET.
 
 ## Installation
 
-### From source
+### From source **Recommended**
 
 1. Clone the repository:
 
